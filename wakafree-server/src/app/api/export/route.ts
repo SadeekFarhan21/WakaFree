@@ -1,13 +1,17 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { checkSecret } from '@/lib/apiAuth'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/export
+// GET /api/export   (requires SYNC_SECRET / CRON_SECRET — pass ?secret=<value>)
 // Dumps everything WakaFree has collected: every daily summary + timeline,
 // plus all account-level snapshots (profile, all-time, goals, projects,
 // machines, agents, stats). One place that exposes everything.
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = checkSecret(req)
+  if (denied) return denied
+
   const [daily, meta] = await Promise.all([
     supabase
       .from('waka_daily')

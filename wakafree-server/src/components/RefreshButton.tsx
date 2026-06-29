@@ -1,6 +1,7 @@
 'use client'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { refreshRecent } from '@/app/dashboard/actions'
 
 export default function RefreshButton() {
   const router = useRouter()
@@ -14,10 +15,9 @@ export default function RefreshButton() {
     setLoading(true)
     setStatus(null)
     try {
-      const res = await fetch('/api/wakatime/sync?days=2', { cache: 'no-store' })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`)
-      setStatus(`Synced ${json.synced ?? 0} day${json.synced === 1 ? '' : 's'}`)
+      const result = await refreshRecent(2)
+      if (result.error) throw new Error(result.error)
+      setStatus(`Synced ${result.synced} day${result.synced === 1 ? '' : 's'}`)
       // Re-render the server component with fresh data.
       startTransition(() => router.refresh())
     } catch (err) {
