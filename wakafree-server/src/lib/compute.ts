@@ -38,3 +38,9 @@ export function formatSeconds(seconds: number): string {
   if (h > 0) return `${h} hr ${m} min`
   return `${m} min`
 }
+
+export function compactNumber(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
+  return String(Math.round(n))
+}

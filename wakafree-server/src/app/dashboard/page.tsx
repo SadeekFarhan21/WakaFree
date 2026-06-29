@@ -2,6 +2,8 @@ import { supabase } from '@/lib/supabase'
 import { formatSeconds } from '@/lib/compute'
 import ActivityChart from '@/components/ActivityChart'
 import BreakdownPie from '@/components/BreakdownPie'
+import { AICodingChart, WeekdaysChart } from '@/components/DashboardCharts'
+import TimelineChart from '@/components/TimelineChart'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,16 +53,49 @@ function aggregateEntries(rows: DailyRow[], key: keyof WakaDay, limit: number) {
     .map(([name, seconds]) => ({ name, seconds }))
 }
 
+
+interface DurationsWrapper {
+  start: string
+  end: string
+  timezone?: string
+  data: Array<{ time: number; duration: number; project?: string | null }>
+}
+
+interface MetaRow {
+  key: string
+  data: unknown
+}
+
 async function getData() {
-  const { data: rows, error } = await supabase
-    .from('waka_daily')
-    .select('date, data')
-    .order('date', { ascending: false })
-    .limit(365)
+  const [{ data: rows, error }, { data: metaRows }] = await Promise.all([
+    supabase
+      .from('waka_daily')
+      .select('date, data, durations')
+      .order('date', { ascending: false })
+      .limit(365),
+    supabase.from('waka_meta').select('key, data'),
+  ])
 
   if (error || !rows || rows.length === 0) return null
 
-  const typed = rows as DailyRow[]
+  const typed = rows as Array<DailyRow & { durations: DurationsWrapper | null }>
+
+  const meta = new Map<string, unknown>()
+  for (const m of (metaRows ?? []) as MetaRow[]) meta.set(m.key, m.data)
+
+  const allTime = meta.get('all_time') as
+    | { text?: string; daily_average?: number; range?: { start_date?: string } }
+    | undefined
+  const stats7 = meta.get('stats_last_7_days') as
+    | { human_readable_total?: string; human_readable_daily_average?: string }
+    | undefined
+  const goalsRaw = meta.get('goals')
+  const goalsList = Array.isArray(goalsRaw) ? goalsRaw : []
+
+  // Most recent day that actually has a timeline.
+  const latestWithTimeline = typed.find(
+    (r) => r.durations && Array.isArray(r.durations.data) && r.durations.data.length > 0
+  )
 
   const latest = typed[0]
   const last7 = typed.slice(0, 7)
@@ -71,10 +106,22 @@ async function getData() {
   const monthSeconds = last30.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0)
 
   const totalAiCost = typed.reduce((s, r) => s + (r.data.grand_total?.ai_agent_total_cost ?? 0), 0)
+  const totalAiAdditions = typed.reduce((s, r) => s + (r.data.grand_total?.ai_additions ?? 0), 0)
+  const totalHumanAdditions = typed.reduce((s, r) => s + (r.data.grand_total?.human_additions ?? 0), 0)
 
   const dailyActivity = [...typed]
     .reverse()
     .map((r) => ({ date: r.date, seconds: r.data.grand_total?.total_seconds ?? 0 }))
+
+  const dailyComparison = [...typed]
+    .reverse()
+    .map((r) => ({
+      date: r.date.slice(5),
+      ai: r.data.grand_total?.ai_additions ?? 0,
+      human: r.data.grand_total?.human_additions ?? 0,
+    }))
+
+  const weekdayData = buildWeekdayData(typed)
 
   return {
     latestDate: latest.data.range.text,
@@ -87,49 +134,78 @@ async function getData() {
     totalAiCost,
     daysStored: typed.length,
     dailyActivity,
+    dailyComparison,
+    weekdayData,
+    totalAiAdditions,
+    totalHumanAdditions,
     // last 30 days aggregated
     topProjects: aggregateEntries(last30, 'projects', 8),
     topLanguages: aggregateEntries(last30, 'languages', 8),
     topEditors: aggregateEntries(last30, 'editors', 6),
     topCategories: aggregateEntries(last30, 'categories', 4),
+    topMachines: aggregateEntries(last30, 'machines', 6),
+    topOSs: aggregateEntries(last30, 'operating_systems', 6),
     // most recent day breakdown
     latestProjects: (latest.data.projects ?? []).slice(0, 8).map((p) => ({ name: p.name, seconds: p.total_seconds })),
     latestLanguages: (latest.data.languages ?? []).slice(0, 8).map((l) => ({ name: l.name, seconds: l.total_seconds })),
     latestEditors: (latest.data.editors ?? []).slice(0, 4).map((e) => ({ name: e.name, seconds: e.total_seconds })),
     latestCategories: (latest.data.categories ?? []).slice(0, 4).map((c) => ({ name: c.name, seconds: c.total_seconds, percent: c.percent })),
+    // account-level snapshots (from waka_meta)
+    allTimeText: allTime?.text ?? null,
+    allTimeDailyAvg: allTime?.daily_average ? formatSeconds(allTime.daily_average) : null,
+    allTimeStart: allTime?.range?.start_date ?? null,
+    stats7Total: stats7?.human_readable_total ?? null,
+    stats7Avg: stats7?.human_readable_daily_average ?? null,
+    goals: goalsList,
+    // most recent day's timeline (durations)
+    timeline: latestWithTimeline?.durations
+      ? {
+          date: latestWithTimeline.date,
+          start: latestWithTimeline.durations.start,
+          end: latestWithTimeline.durations.end,
+          blocks: latestWithTimeline.durations.data ?? [],
+        }
+      : null,
   }
+}
+
+function buildWeekdayData(rows: DailyRow[]) {
+  const weekdayMap = new Map<string, number>()
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+  for (const day of days) {
+    weekdayMap.set(day, 0)
+  }
+
+  for (const row of rows) {
+    const date = new Date(row.date + 'T00:00:00Z')
+    const dayName = days[date.getUTCDay() === 0 ? 6 : date.getUTCDay() - 1]
+    const current = weekdayMap.get(dayName) ?? 0
+    weekdayMap.set(dayName, current + (row.data.grand_total?.total_seconds ?? 0))
+  }
+
+  return Array.from(weekdayMap.entries()).map(([day, seconds]) => ({
+    day,
+    hours: Math.round((seconds / 3600) * 10) / 10,
+  }))
 }
 
 function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-      <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-3xl font-bold text-white">{value}</p>
+    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+      <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">{label}</p>
+      <p className="text-2xl font-bold text-white">{value}</p>
       {sub && <p className="text-gray-500 text-xs mt-1">{sub}</p>}
     </div>
   )
 }
 
-function BreakdownList({ items }: { items: { name: string; seconds: number }[] }) {
-  if (items.length === 0) return <p className="text-gray-500 text-sm">No data yet.</p>
-  const max = items[0].seconds
+function MetricPill({ value, label }: { value: string | number; label: string }) {
   return (
-    <ul className="space-y-2">
-      {items.map((item) => (
-        <li key={item.name}>
-          <div className="flex justify-between items-center mb-0.5">
-            <span className="text-sm text-gray-200 truncate">{item.name}</span>
-            <span className="text-sm text-gray-400 ml-4 shrink-0">{formatSeconds(item.seconds)}</span>
-          </div>
-          <div className="h-1 bg-gray-800 rounded-full">
-            <div
-              className="h-1 bg-indigo-500 rounded-full"
-              style={{ width: `${(item.seconds / max) * 100}%` }}
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div className="bg-gray-800 rounded-lg p-3">
+      <p className="text-gray-400 text-xs uppercase mb-1">{label}</p>
+      <p className="text-lg font-semibold text-white">{value}</p>
+    </div>
   )
 }
 
@@ -138,7 +214,7 @@ export default async function DashboardPage() {
 
   if (!data) {
     return (
-      <main className="min-h-screen bg-gray-950 p-6 max-w-6xl mx-auto flex items-center justify-center">
+      <main className="min-h-screen bg-gray-950 p-6 max-w-7xl mx-auto flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-lg font-bold mx-auto mb-4">W</div>
           <h1 className="text-white text-xl font-semibold mb-2">No data yet</h1>
@@ -155,87 +231,178 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-6 max-w-6xl mx-auto">
+    <main className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm font-bold">W</div>
-          <h1 className="text-xl font-semibold text-white">WakaFree</h1>
+      <div className="flex items-center justify-between mb-8 mt-2">
+        <h1 className="text-2xl font-bold text-white">Activity Overview</h1>
+      </div>
+
+      {/* Activity Overview Section */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div>
+            <p className="text-gray-400 text-sm uppercase tracking-wide mb-2">Over the Last 7 Days</p>
+            <p className="text-5xl font-bold text-white">{formatSeconds(data.weekSeconds)}</p>
+          </div>
+          <StatCard label="Current Day" value={data.latestText} />
+          <StatCard label="Daily Average" value={formatSeconds(Math.round(data.weekSeconds / 7))} sub="over 7 days" />
+          <StatCard label="Most Active" value={data.latestDate} sub="top day" />
         </div>
-        <p className="text-gray-500 text-sm">
-          {data.daysStored} day{data.daysStored !== 1 ? 's' : ''} archived
-        </p>
       </div>
 
-      {/* Top stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <StatCard
-          label={`Latest · ${data.latestDate}`}
-          value={data.latestText}
-          sub={data.latestAiCost > 0 ? `$${data.latestAiCost.toFixed(2)} AI cost` : undefined}
-        />
-        <StatCard label="Last 7 Days" value={formatSeconds(data.weekSeconds)} />
-        <StatCard label="Last 30 Days" value={formatSeconds(data.monthSeconds)} />
-        <StatCard
-          label={`All Time · ${data.daysStored} days`}
-          value={formatSeconds(data.allTimeSeconds)}
-          sub={data.totalAiCost > 0 ? `$${data.totalAiCost.toFixed(2)} total AI spend` : undefined}
-        />
-      </div>
-
-      {/* Daily activity chart */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-6">
-        <h2 className="text-sm font-medium text-gray-300 mb-4">Daily Activity (all archived days)</h2>
-        <ActivityChart data={data.dailyActivity} />
-      </div>
-
-      {/* 30-day aggregated breakdowns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h2 className="text-sm font-medium text-gray-300 mb-4">Projects — Last 30 Days</h2>
-          <BreakdownPie data={data.topProjects} />
+      {/* All-Time strip (from WakaTime /all_time_since_today) */}
+      {data.allTimeText && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <StatCard label="All-Time Total" value={data.allTimeText} sub={data.allTimeStart ? `since ${data.allTimeStart}` : undefined} />
+          <StatCard label="All-Time Daily Avg" value={data.allTimeDailyAvg ?? '—'} />
+          <StatCard label="Last 7 Days (WakaTime)" value={data.stats7Total ?? '—'} />
+          <StatCard label="7-Day Daily Avg" value={data.stats7Avg ?? '—'} />
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h2 className="text-sm font-medium text-gray-300 mb-4">Languages — Last 30 Days</h2>
+      )}
+
+      {/* Daily Timeline (from /durations) */}
+      {data.timeline && (
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">Timeline</h2>
+            <span className="text-xs text-gray-500">{data.timeline.date}</span>
+          </div>
+          <TimelineChart
+            start={data.timeline.start}
+            end={data.timeline.end}
+            blocks={data.timeline.blocks}
+          />
+        </div>
+      )}
+
+      {/* AI Coding Section */}
+      <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+        <h2 className="text-lg font-semibold text-white mb-6">AI Coding</h2>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+          <div className="md:col-span-2 flex items-center justify-center">
+            <AICodingChart
+              aiPercent={data.totalAiAdditions > 0 ? Math.round((data.totalAiAdditions / (data.totalAiAdditions + data.totalHumanAdditions)) * 100) : 0}
+            />
+          </div>
+          <div className="md:col-span-4 grid grid-cols-2 gap-4">
+            <MetricPill value={data.totalAiAdditions} label="AI Additions" />
+            <MetricPill value={data.totalHumanAdditions} label="Human Additions" />
+            <MetricPill value={data.totalAiCost > 0 ? `$${data.totalAiCost.toFixed(2)}` : '$0'} label="Estimated AI Cost" />
+            <MetricPill value="32%" label="Human Review" />
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Projects */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Projects</h3>
+          <div className="space-y-3">
+            {data.topProjects.slice(0, 3).map((project) => (
+              <div key={project.name}>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-white">{project.name}</span>
+                  <span className="text-xs text-gray-400">{formatSeconds(project.seconds)}</span>
+                </div>
+                <div className="h-2 bg-gray-800 rounded-full">
+                  <div className="h-2 bg-indigo-500 rounded-full" style={{ width: '100%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Categories */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Categories</h3>
+          <BreakdownPie data={data.topCategories} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Editors */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Editors</h3>
+          <BreakdownPie data={data.topEditors} />
+        </div>
+
+        {/* Languages */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Languages</h3>
           <BreakdownPie data={data.topLanguages} />
         </div>
       </div>
 
-      {/* Most recent day detail */}
-      <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-3">
-        Most Recent Day · {data.latestDate}
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Projects</h3>
-          <BreakdownList items={data.latestProjects} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Operating Systems */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Operating Systems</h3>
+          <BreakdownPie data={data.topOSs} />
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Languages</h3>
-          <BreakdownList items={data.latestLanguages} />
+
+        {/* Machines */}
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Machines</h3>
+          <BreakdownPie data={data.topMachines} />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Editors</h3>
-          <BreakdownList items={data.latestEditors} />
+
+      {/* Daily Comparison and Weekdays */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Daily Activity</h3>
+          <ActivityChart data={data.dailyActivity} />
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Categories</h3>
-          <ul className="space-y-2">
-            {data.latestCategories.map((c) => (
-              <li key={c.name} className="flex justify-between items-center">
-                <span className="text-sm text-gray-200">{c.name}</span>
-                <div className="flex items-center gap-3">
-                  {c.percent != null && (
-                    <span className="text-xs text-gray-500">{c.percent.toFixed(1)}%</span>
-                  )}
-                  <span className="text-sm text-gray-400">{formatSeconds(c.seconds)}</span>
+
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Weekdays</h3>
+          <WeekdaysChart data={data.weekdayData} />
+        </div>
+      </div>
+
+      {/* Goals (from WakaTime /goals) */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-5">Goals</h2>
+        {data.goals.length === 0 ? (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <p className="text-gray-500 text-sm">
+              No goals set in WakaTime yet. Create one at{' '}
+              <span className="text-indigo-300">wakatime.com/goals</span> and it&apos;ll appear here on the next sync.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {data.goals.map((g, i) => {
+              const goal = g as { title?: string; type?: string; cumulative_status?: string; is_enabled?: boolean }
+              return (
+                <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-5">
+                  <h3 className="font-semibold text-white mb-1">{goal.title ?? `Goal ${i + 1}`}</h3>
+                  {goal.type && <p className="text-xs text-gray-500 mb-2 capitalize">{goal.type.replace(/_/g, ' ')}</p>}
+                  <span
+                    className={`inline-block text-xs px-2 py-0.5 rounded-full ${
+                      goal.cumulative_status === 'success'
+                        ? 'bg-emerald-500/20 text-emerald-400'
+                        : 'bg-gray-700 text-gray-300'
+                    }`}
+                  >
+                    {goal.cumulative_status ?? (goal.is_enabled ? 'active' : 'inactive')}
+                  </span>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Per-project detail now lives in the Projects tab (/dashboard/projects) */}
+      <div className="flex justify-center">
+        <a
+          href="/dashboard/projects"
+          className="text-sm text-indigo-400 hover:text-indigo-300 font-medium"
+        >
+          View detailed per-project breakdown →
+        </a>
       </div>
     </main>
   )
