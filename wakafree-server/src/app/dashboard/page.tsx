@@ -269,11 +269,7 @@ export default async function DashboardPage() {
             <h2 className="text-lg font-semibold text-white">Timeline</h2>
             <span className="text-xs text-gray-500">{data.timeline.date}</span>
           </div>
-          <TimelineChart
-            start={data.timeline.start}
-            end={data.timeline.end}
-            blocks={data.timeline.blocks}
-          />
+          <TimelineChart date={data.timeline.date} blocks={data.timeline.blocks} />
         </div>
       )}
 

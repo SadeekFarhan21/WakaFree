@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { currentLocalDate } from '@/lib/timezone'
 
 const WAKATIME_API = 'https://wakatime.com/api/v1/users/current'
 
@@ -10,26 +11,13 @@ function wakaHeaders(): HeadersInit {
   }
 }
 
-// Timezone WakaTime keys daily activity by. America/Los_Angeles resolves to
-// PDT (UTC-7) during daylight saving (mid-Mar–early-Nov, covering Jun 11–Aug 29)
-// and PST (UTC-8) otherwise — so date boundaries are always correct, no fixed
-// offset that would drift across DST. Override with WAKA_TIMEZONE if needed.
-const WAKA_TIMEZONE = process.env.WAKA_TIMEZONE ?? 'America/Los_Angeles'
-
-// Returns the calendar date `daysAgo` days before "today" in WAKA_TIMEZONE, as
-// YYYY-MM-DD. Anchoring to the local (Pacific) day — not UTC — keeps today/
-// yesterday aligned with WakaTime: after ~5pm PDT, UTC has already rolled to the
-// next day, so a UTC-based date would sync the wrong day.
+// Returns the calendar date `daysAgo` days before "today" in the timezone the
+// user is currently in (see lib/timezone — Eastern, then Pacific from Jun 11).
+// Anchoring to the local day — not UTC — keeps today/yesterday aligned with how
+// WakaTime buckets activity: after ~5pm PDT, UTC has already rolled to the next
+// day, so a UTC-based date would sync the wrong day.
 export function offsetDate(daysAgo: number): string {
-  // "Today" as seen in Pacific time. en-CA formats as YYYY-MM-DD.
-  const today = new Intl.DateTimeFormat('en-CA', {
-    timeZone: WAKA_TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date())
-
-  const [y, m, d] = today.split('-').map(Number)
+  const [y, m, d] = currentLocalDate().split('-').map(Number)
   // Anchor at UTC noon so subtracting whole days never crosses a DST/midnight edge.
   const dt = new Date(Date.UTC(y, m - 1, d, 12))
   dt.setUTCDate(dt.getUTCDate() - daysAgo)

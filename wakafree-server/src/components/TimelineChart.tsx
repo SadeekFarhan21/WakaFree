@@ -1,3 +1,5 @@
+import { timezoneForDate, localMidnightEpochSeconds } from '@/lib/timezone'
+
 interface DurationBlock {
   time: number // epoch seconds (block start)
   duration: number // seconds
@@ -5,8 +7,7 @@ interface DurationBlock {
 }
 
 interface Props {
-  start: string // ISO day start
-  end: string // ISO day end
+  date: string // YYYY-MM-DD — used to anchor the day in the right timezone
   blocks: DurationBlock[]
 }
 
@@ -29,12 +30,14 @@ function hourLabel(h: number): string {
   return hh < 12 ? `${hh}a` : `${hh - 12}p`
 }
 
-export default function TimelineChart({ start, end, blocks }: Props) {
-  const startEpoch = new Date(start).getTime() / 1000
-  const endEpoch = new Date(end).getTime() / 1000
-  const span = endEpoch - startEpoch
+export default function TimelineChart({ date, blocks }: Props) {
+  // Anchor the day to local midnight in the timezone the user was in on this
+  // date (Eastern before Jun 11, Pacific after), so the hour axis is correct.
+  const tz = timezoneForDate(date)
+  const startEpoch = localMidnightEpochSeconds(date, tz)
+  const span = 86400 // one full day in seconds
 
-  if (span <= 0 || blocks.length === 0) {
+  if (blocks.length === 0) {
     return <p className="text-gray-500 text-sm text-center py-8">No timeline for this day.</p>
   }
 
