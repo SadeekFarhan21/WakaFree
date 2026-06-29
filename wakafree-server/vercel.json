@@ -1,8 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/wakatime/sync",
-      "schedule": "0 2 * * *"
+      "path": "/api/wakatime/sync?days=2",
+      "schedule": "0 8 * * *"
     }
   ]
 }
