@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { formatSeconds } from '@/lib/compute'
+import { currentLocalDate } from '@/lib/timezone'
 import ActivityChart from '@/components/ActivityChart'
 import BreakdownPie from '@/components/BreakdownPie'
 import { AICodingChart, WeekdaysChart } from '@/components/DashboardCharts'
@@ -79,7 +80,13 @@ async function getData() {
 
   if (error || !rows || rows.length === 0) return null
 
-  const typed = rows as Array<DailyRow & { durations: DurationsWrapper | null }>
+  const todayLocal = currentLocalDate()
+  // Drop any stale rows dated in the future relative to our dedicated timezone
+  // (e.g. a UTC-rolled "tomorrow" row created before the timezone fix).
+  const typed = (rows as Array<DailyRow & { durations: DurationsWrapper | null }>).filter(
+    (r) => r.date <= todayLocal
+  )
+  if (typed.length === 0) return null
 
   const meta = new Map<string, unknown>()
   for (const m of (metaRows ?? []) as MetaRow[]) meta.set(m.key, m.data)
@@ -101,6 +108,16 @@ async function getData() {
   const latest = typed[0]
   const last7 = typed.slice(0, 7)
   const last30 = typed.slice(0, 30)
+
+  // Current day = the row for today in our dedicated timezone (0 if none yet).
+  const todayRow = typed.find((r) => r.date === todayLocal)
+  const currentDayText = todayRow?.data.grand_total?.text ?? '0 secs'
+
+  // Most active = the day with the most tracked time across all history.
+  const mostActive = typed.reduce((best, r) =>
+    (r.data.grand_total?.total_seconds ?? 0) > (best.data.grand_total?.total_seconds ?? 0) ? r : best
+  )
+  const mostActiveLabel = mostActive.data.range?.text ?? mostActive.date
 
   const allTimeSeconds = typed.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0)
   const weekSeconds = last7.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0)
@@ -129,6 +146,8 @@ async function getData() {
     latestSeconds: latest.data.grand_total?.total_seconds ?? 0,
     latestText: latest.data.grand_total?.text ?? '0 min',
     latestAiCost: latest.data.grand_total?.ai_agent_total_cost ?? 0,
+    currentDayText,
+    mostActiveLabel,
     weekSeconds,
     monthSeconds,
     allTimeSeconds,
@@ -246,9 +265,9 @@ export default async function DashboardPage() {
             <p className="text-gray-400 text-sm uppercase tracking-wide mb-2">Over the Last 7 Days</p>
             <p className="text-5xl font-bold text-white">{formatSeconds(data.weekSeconds)}</p>
           </div>
-          <StatCard label="Current Day" value={data.latestText} />
+          <StatCard label="Current Day" value={data.currentDayText} />
           <StatCard label="Daily Average" value={formatSeconds(Math.round(data.weekSeconds / 7))} sub="over 7 days" />
-          <StatCard label="Most Active" value={data.latestDate} sub="top day" />
+          <StatCard label="Most Active" value={data.mostActiveLabel} sub="top day" />
         </div>
       </div>
 
