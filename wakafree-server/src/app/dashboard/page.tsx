@@ -4,6 +4,7 @@ import ActivityChart from '@/components/ActivityChart'
 import BreakdownPie from '@/components/BreakdownPie'
 import { AICodingChart, WeekdaysChart } from '@/components/DashboardCharts'
 import TimelineChart from '@/components/TimelineChart'
+import RefreshButton from '@/components/RefreshButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -235,6 +236,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8 mt-2">
         <h1 className="text-2xl font-bold text-white">Activity Overview</h1>
+        <RefreshButton />
       </div>
 
       {/* Activity Overview Section */}

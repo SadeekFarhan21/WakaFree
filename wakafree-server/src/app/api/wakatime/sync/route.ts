@@ -74,7 +74,8 @@ async function syncMeta(): Promise<string[]> {
 
 // GET /api/wakatime/sync
 // ?date=YYYY-MM-DD       → sync a specific date
-// ?backfill=N            → sync the last N days (max 365)
+// ?days=N                → refresh the last N days INCLUDING today (max 365)
+// ?backfill=N            → sync the N days ending yesterday (max 365)
 // ?meta=0                → skip the account-level snapshot refresh
 // no params              → sync yesterday
 export async function GET(req: NextRequest) {
@@ -88,6 +89,8 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url)
   const specificDate = searchParams.get('date')
+  const recentDaysParam = searchParams.get('days')
+  const recentDays = recentDaysParam ? Math.min(Math.max(Number(recentDaysParam), 1), 365) : null
   const backfillDays = Math.min(Number(searchParams.get('backfill') ?? 1), 365)
   const includeMeta = searchParams.get('meta') !== '0'
 
@@ -95,6 +98,10 @@ export async function GET(req: NextRequest) {
   if (specificDate) {
     start = specificDate
     end = specificDate
+  } else if (recentDays) {
+    // Recent N days, anchored to today (so today's in-progress data refreshes too).
+    end = offsetDate(0)
+    start = offsetDate(recentDays - 1)
   } else {
     end = offsetDate(1)
     start = backfillDays > 1 ? offsetDate(backfillDays) : end
