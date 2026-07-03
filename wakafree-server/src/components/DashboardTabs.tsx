@@ -11,7 +11,7 @@ export default function DashboardTabs() {
   const pathname = usePathname()
 
   return (
-    <div className="flex items-center gap-1 border-b border-gray-800">
+    <div className="flex items-center">
       {TABS.map((tab) => {
         const active =
           tab.href === '/dashboard'
@@ -21,10 +21,10 @@ export default function DashboardTabs() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            className={`border-b-2 px-4 py-3.5 text-sm transition-colors ${
               active
-                ? 'border-indigo-500 text-white'
-                : 'border-transparent text-gray-400 hover:text-gray-200'
+                ? 'border-[#2595ff] font-medium text-[#e1e7ef]'
+                : 'border-transparent text-[#7f8ea3] hover:text-[#e1e7ef]'
             }`}
           >
             {tab.label}

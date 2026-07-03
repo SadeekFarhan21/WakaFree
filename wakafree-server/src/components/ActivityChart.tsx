@@ -21,18 +21,18 @@ export default function ActivityChart({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-        <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 12 }} />
-        <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} unit="h" />
+        <XAxis dataKey="date" tick={{ fill: '#7f8ea3', fontSize: 12 }} />
+        <YAxis tick={{ fill: '#7f8ea3', fontSize: 12 }} unit="h" />
         <Tooltip
           formatter={(value) => [`${value}h`, 'Coding']}
           contentStyle={{
-            backgroundColor: '#1f2937',
-            border: 'none',
+            backgroundColor: '#030711',
+            border: '1px solid #1d283a',
             borderRadius: '8px',
-            color: '#f9fafb',
+            color: '#e1e7ef',
           }}
         />
-        <Bar dataKey="hours" fill="#6366f1" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="hours" fill="#2595ff" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

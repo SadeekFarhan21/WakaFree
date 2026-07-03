@@ -11,9 +11,10 @@ interface Props {
   blocks: DurationBlock[]
 }
 
+// WakaTime (c3/d3) default chart palette
 const PALETTE = [
-  '#6366f1', '#34d399', '#fb923c', '#60a5fa', '#f87171',
-  '#a78bfa', '#fbbf24', '#2dd4bf', '#f472b6', '#818cf8',
+  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+  '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
 ]
 
 function colorFor(project: string, projects: string[]): string {
@@ -38,7 +39,7 @@ export default function TimelineChart({ date, blocks }: Props) {
   const span = 86400 // one full day in seconds
 
   if (blocks.length === 0) {
-    return <p className="text-gray-500 text-sm text-center py-8">No timeline for this day.</p>
+    return <p className="text-[#7f8ea3] text-sm text-center py-8">No timeline for this day.</p>
   }
 
   const projects = Array.from(new Set(blocks.map((b) => b.project ?? 'Unknown')))
@@ -46,7 +47,7 @@ export default function TimelineChart({ date, blocks }: Props) {
   return (
     <div>
       {/* Track */}
-      <div className="relative h-10 bg-gray-800 rounded-md overflow-hidden">
+      <div className="relative h-10 bg-[#1d283a] rounded-md overflow-hidden">
         {blocks.map((b, i) => {
           const left = ((b.time - startEpoch) / span) * 100
           const width = (b.duration / span) * 100
@@ -72,7 +73,7 @@ export default function TimelineChart({ date, blocks }: Props) {
         {HOUR_MARKS.map((h) => (
           <span
             key={h}
-            className="absolute text-[10px] text-gray-500 -translate-x-1/2"
+            className="absolute text-[10px] text-[#7f8ea3] -translate-x-1/2"
             style={{ left: `${(h / 24) * 100}%` }}
           >
             {hourLabel(h)}
@@ -88,7 +89,7 @@ export default function TimelineChart({ date, blocks }: Props) {
               className="w-2.5 h-2.5 rounded-sm shrink-0"
               style={{ backgroundColor: colorFor(p, projects) }}
             />
-            <span className="text-xs text-gray-400">{p}</span>
+            <span className="text-xs text-[#7f8ea3]">{p}</span>
           </div>
         ))}
       </div>

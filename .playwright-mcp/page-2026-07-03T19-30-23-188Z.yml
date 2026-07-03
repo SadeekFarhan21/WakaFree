@@ -1,0 +1,256 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - navigation [ref=f4e3]:
+      - generic [ref=f4e4]:
+        - generic [ref=f4e5]:
+          - link "WakaFree WakaFree" [ref=f4e6] [cursor=pointer]:
+            - /url: /
+            - img "WakaFree" [ref=f4e7]
+            - generic [ref=f4e8]: WakaFree
+          - generic [ref=f4e9]:
+            - link "Dashboard" [ref=f4e10] [cursor=pointer]:
+              - /url: /dashboard
+            - link "Projects" [ref=f4e11] [cursor=pointer]:
+              - /url: /dashboard/projects
+        - link "Plugins" [ref=f4e12] [cursor=pointer]:
+          - /url: https://wakatime.com/plugins
+    - main [ref=f4e13]:
+      - generic [ref=f4e14]:
+        - heading "Activity Overview" [level=1] [ref=f4e15]
+        - button "Refresh data" [ref=f4e17] [cursor=pointer]:
+          - img [ref=f4e18]
+          - text: Refresh data
+      - generic [ref=f4e24]:
+        - generic [ref=f4e25]:
+          - paragraph [ref=f4e26]: Over the Last 7 Days
+          - paragraph [ref=f4e27]: 17 hr 12 min
+        - generic [ref=f4e28]:
+          - paragraph [ref=f4e29]: Current Day
+          - paragraph [ref=f4e30]: 16 mins
+        - generic [ref=f4e31]:
+          - paragraph [ref=f4e32]: Daily Average
+          - paragraph [ref=f4e33]: 2 hr 27 min
+          - paragraph [ref=f4e34]: over 7 days
+        - generic [ref=f4e35]:
+          - paragraph [ref=f4e36]: Most Active
+          - paragraph [ref=f4e37]: Sun Jun 21st 2026
+          - paragraph [ref=f4e38]: top day
+      - generic [ref=f4e39]:
+        - generic [ref=f4e40]:
+          - paragraph [ref=f4e41]: All-Time Total
+          - paragraph [ref=f4e42]: 174 hrs 34 mins
+          - paragraph [ref=f4e43]: since 2024-01-26
+        - generic [ref=f4e44]:
+          - paragraph [ref=f4e45]: All-Time Daily Avg
+          - paragraph [ref=f4e46]: 1 hr 32 min
+        - generic [ref=f4e47]:
+          - paragraph [ref=f4e48]: Last 7 Days (WakaTime)
+          - paragraph [ref=f4e49]: 17 hrs 18 mins
+        - generic [ref=f4e50]:
+          - paragraph [ref=f4e51]: 7-Day Daily Avg
+          - paragraph [ref=f4e52]: 2 hrs 53 mins
+      - generic [ref=f4e53]:
+        - generic [ref=f4e54]:
+          - heading "Timeline" [level=2] [ref=f4e55]
+          - generic [ref=f4e56]: 2026-07-03
+        - generic [ref=f4e57]:
+          - generic [ref=f4e58]:
+            - generic "competitive-programming · 0m" [ref=f4e59]
+            - generic "competitive-programming-website · 6m" [ref=f4e60]
+            - generic "WakaFree · 10m" [ref=f4e61]
+          - generic [ref=f4e62]:
+            - generic [ref=f4e63]: 12a
+            - generic [ref=f4e64]: 3a
+            - generic [ref=f4e65]: 6a
+            - generic [ref=f4e66]: 9a
+            - generic [ref=f4e67]: 12p
+            - generic [ref=f4e68]: 3p
+            - generic [ref=f4e69]: 6p
+            - generic [ref=f4e70]: 9p
+            - generic [ref=f4e71]: 12a
+          - generic [ref=f4e72]:
+            - generic [ref=f4e75]: competitive-programming
+            - generic [ref=f4e78]: competitive-programming-website
+            - generic [ref=f4e81]: WakaFree
+      - generic [ref=f4e82]:
+        - heading "AI Coding" [level=2] [ref=f4e83]
+        - generic [ref=f4e84]:
+          - generic [ref=f4e86]:
+            - application [ref=f4e88]
+            - generic [ref=f4e89]:
+              - paragraph [ref=f4e90]: 94%
+              - paragraph [ref=f4e91]: AI-driven
+          - generic [ref=f4e92]:
+            - generic [ref=f4e93]:
+              - paragraph [ref=f4e94]: AI Additions
+              - paragraph [ref=f4e95]: "117259"
+            - generic [ref=f4e96]:
+              - paragraph [ref=f4e97]: Human Additions
+              - paragraph [ref=f4e98]: "8092"
+            - generic [ref=f4e99]:
+              - paragraph [ref=f4e100]: Estimated AI Cost
+              - paragraph [ref=f4e101]: $6623.53
+            - generic [ref=f4e102]:
+              - paragraph [ref=f4e103]: Human Review
+              - paragraph [ref=f4e104]: 32%
+      - generic [ref=f4e105]:
+        - generic [ref=f4e106]:
+          - heading "Projects" [level=3] [ref=f4e107]
+          - generic [ref=f4e108]:
+            - generic [ref=f4e110]:
+              - generic [ref=f4e111]: photo-graphy
+              - generic [ref=f4e112]: 11 hr 8 min
+            - generic [ref=f4e116]:
+              - generic [ref=f4e117]: college-notes
+              - generic [ref=f4e118]: 8 hr 46 min
+            - generic [ref=f4e122]:
+              - generic [ref=f4e123]: competitive-programming
+              - generic [ref=f4e124]: 5 hr 56 min
+        - generic [ref=f4e127]:
+          - heading "Categories" [level=3] [ref=f4e128]
+          - generic [ref=f4e130]:
+            - list [ref=f4e132]:
+              - listitem [ref=f4e133]:
+                - img "AI Coding legend icon" [ref=f4e134]
+                - generic [ref=f4e136]: AI Coding
+              - listitem [ref=f4e137]:
+                - img "Coding legend icon" [ref=f4e138]
+                - generic [ref=f4e140]: Coding
+              - listitem [ref=f4e141]:
+                - img "Writing Docs legend icon" [ref=f4e142]
+                - generic [ref=f4e144]: Writing Docs
+            - application [ref=f4e145]
+      - generic [ref=f4e146]:
+        - generic [ref=f4e147]:
+          - heading "Editors" [level=3] [ref=f4e148]
+          - generic [ref=f4e150]:
+            - list [ref=f4e152]:
+              - listitem [ref=f4e153]:
+                - img "Claude Code legend icon" [ref=f4e154]
+                - generic [ref=f4e156]: Claude Code
+              - listitem [ref=f4e157]:
+                - img "Codex CLI legend icon" [ref=f4e158]
+                - generic [ref=f4e160]: Codex CLI
+              - listitem [ref=f4e161]:
+                - img "Kiro legend icon" [ref=f4e162]
+                - generic [ref=f4e164]: Kiro
+              - listitem [ref=f4e165]:
+                - img "Opencode Cli legend icon" [ref=f4e166]
+                - generic [ref=f4e168]: Opencode Cli
+              - listitem [ref=f4e169]:
+                - img "VS Code legend icon" [ref=f4e170]
+                - generic [ref=f4e172]: VS Code
+            - application [ref=f4e173]
+        - generic [ref=f4e174]:
+          - heading "Languages" [level=3] [ref=f4e175]
+          - generic [ref=f4e177]:
+            - list [ref=f4e179]:
+              - listitem [ref=f4e180]:
+                - img "Astro legend icon" [ref=f4e181]
+                - generic [ref=f4e183]: Astro
+              - listitem [ref=f4e184]:
+                - img "C++ legend icon" [ref=f4e185]
+                - generic [ref=f4e187]: C++
+              - listitem [ref=f4e188]:
+                - img "JSON legend icon" [ref=f4e189]
+                - generic [ref=f4e191]: JSON
+              - listitem [ref=f4e192]:
+                - img "JavaScript legend icon" [ref=f4e193]
+                - generic [ref=f4e195]: JavaScript
+              - listitem [ref=f4e196]:
+                - img "Markdown legend icon" [ref=f4e197]
+                - generic [ref=f4e199]: Markdown
+              - listitem [ref=f4e200]:
+                - img "Other legend icon" [ref=f4e201]
+                - generic [ref=f4e203]: Other
+              - listitem [ref=f4e204]:
+                - img "Python legend icon" [ref=f4e205]
+                - generic [ref=f4e207]: Python
+              - listitem [ref=f4e208]:
+                - img "TypeScript legend icon" [ref=f4e209]
+                - generic [ref=f4e211]: TypeScript
+            - application [ref=f4e212]
+      - generic [ref=f4e213]:
+        - generic [ref=f4e214]:
+          - heading "Operating Systems" [level=3] [ref=f4e215]
+          - generic [ref=f4e217]:
+            - list [ref=f4e219]:
+              - listitem [ref=f4e220]:
+                - img "Linux legend icon" [ref=f4e221]
+                - generic [ref=f4e223]: Linux
+              - listitem [ref=f4e224]:
+                - img "Mac legend icon" [ref=f4e225]
+                - generic [ref=f4e227]: Mac
+            - application [ref=f4e228]
+        - generic [ref=f4e229]:
+          - heading "Machines" [level=3] [ref=f4e230]
+          - generic [ref=f4e232]:
+            - list [ref=f4e234]:
+              - listitem [ref=f4e235]:
+                - img "Farhans-MacBook-Neo.local legend icon" [ref=f4e236]
+                - generic [ref=f4e238]: Farhans-MacBook-Neo.local
+              - listitem [ref=f4e239]:
+                - img "Farhans-MacBook-Pro-2.local legend icon" [ref=f4e240]
+                - generic [ref=f4e242]: Farhans-MacBook-Pro-2.local
+              - listitem [ref=f4e243]:
+                - img "Farhans-MacBook-Pro.local legend icon" [ref=f4e244]
+                - generic [ref=f4e246]: Farhans-MacBook-Pro.local
+              - listitem [ref=f4e247]:
+                - img "Mac.lan legend icon" [ref=f4e248]
+                - generic [ref=f4e250]: Mac.lan
+              - listitem [ref=f4e251]:
+                - img "codespaces-f027bb legend icon" [ref=f4e252]
+                - generic [ref=f4e254]: codespaces-f027bb
+              - listitem [ref=f4e255]:
+                - img "ds-waf-dataplane-operations-agent-1lplh2ie legend icon" [ref=f4e256]
+                - generic [ref=f4e258]: ds-waf-dataplane-operations-agent-1lplh2ie
+            - application [ref=f4e259]
+      - generic [ref=f4e260]:
+        - generic [ref=f4e261]:
+          - heading "Daily Activity" [level=3] [ref=f4e262]
+          - application [ref=f4e265]:
+            - generic [ref=f4e273]:
+              - generic [ref=f4e274]:
+                - generic [ref=f4e276]: 07-27
+                - generic [ref=f4e278]: 08-27
+                - generic [ref=f4e280]: 09-27
+                - generic [ref=f4e282]: 10-27
+                - generic [ref=f4e284]: 11-25
+                - generic [ref=f4e286]: 12-23
+                - generic [ref=f4e288]: 01-21
+                - generic [ref=f4e290]: 02-19
+                - generic [ref=f4e292]: 03-21
+                - generic [ref=f4e294]: 04-21
+                - generic [ref=f4e296]: 05-23
+                - generic [ref=f4e298]: 07-03
+              - generic [ref=f4e299]:
+                - generic [ref=f4e301]: 0h
+                - generic [ref=f4e303]: 3h
+                - generic [ref=f4e305]: 6h
+                - generic [ref=f4e307]: 9h
+                - generic [ref=f4e309]: 12h
+        - generic [ref=f4e310]:
+          - heading "Weekdays" [level=3] [ref=f4e311]
+          - application [ref=f4e314]:
+            - generic [ref=f4e322]:
+              - generic [ref=f4e323]:
+                - generic [ref=f4e325]: Monday
+                - generic [ref=f4e327]: Tuesday
+                - generic [ref=f4e329]: Wednesday
+                - generic [ref=f4e331]: Thursday
+                - generic [ref=f4e333]: Friday
+                - generic [ref=f4e335]: Saturday
+                - generic [ref=f4e337]: Sunday
+              - generic [ref=f4e338]:
+                - generic [ref=f4e340]: 0h
+                - generic [ref=f4e342]: 15h
+                - generic [ref=f4e344]: 30h
+                - generic [ref=f4e346]: 45h
+                - generic [ref=f4e348]: 60h
+      - generic [ref=f4e349]:
+        - heading "Goals" [level=2] [ref=f4e350]
+        - paragraph [ref=f4e352]: No goals set in WakaTime yet. Create one at wakatime.com/goals and it'll appear here on the next sync.
+      - link "View detailed per-project breakdown →" [ref=f4e354] [cursor=pointer]:
+        - /url: /dashboard/projects
+  - alert [ref=f4e355]
+  - generic [ref=f4e356]: "15"

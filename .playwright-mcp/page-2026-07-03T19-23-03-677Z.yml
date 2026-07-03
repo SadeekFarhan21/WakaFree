@@ -1,0 +1,186 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "WakaFree WakaFree" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "WakaFree" [ref=e6]
+          - generic [ref=e7]: WakaFree
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Projects" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard/projects
+          - link "Plugins" [ref=e11] [cursor=pointer]:
+            - /url: https://wakatime.com/plugins
+          - link "Docs" [ref=e12] [cursor=pointer]:
+            - /url: https://wakatime.com/developers
+          - link "Log In" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+    - banner [ref=e14]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: AI coding analytics
+          - heading "Understand your AI Code" [level=1] [ref=e19]
+          - paragraph [ref=e20]: Automatically track AI-generated code, model efficiency, and how tools like Cursor or Claude impact your team’s velocity.
+          - link "Get started" [ref=e22] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=e24]:
+          - generic [ref=e25]: dashboard view
+          - img "WakaFree dashboard" [ref=e26]
+    - generic [ref=e28]:
+      - generic [ref=e29]: What you can measure
+      - heading "A clearer view of AI output, quality, and cost" [level=2] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: "01"
+          - heading "AI Cost" [level=3] [ref=e34]
+          - paragraph [ref=e35]: Track AI spend across every model and agent, with a per-developer breakdown so teams stay on budget and spot the costliest agents.
+        - generic [ref=e36]:
+          - generic [ref=e37]: "02"
+          - heading "AI Adoption" [level=3] [ref=e38]
+          - paragraph [ref=e39]: Monitor AI adoption across your company — which agents devs are using and how many lines are AI-generated vs human-written.
+        - generic [ref=e40]:
+          - generic [ref=e41]: "03"
+          - heading "AI Effectiveness" [level=3] [ref=e42]
+          - paragraph [ref=e43]: See how often devs modify AI-generated code. Prove AI is shipping, not creating more work.
+        - generic [ref=e44]:
+          - generic [ref=e45]: "04"
+          - heading "Model efficiency" [level=3] [ref=e46]
+          - paragraph [ref=e47]: Compare average tokens per line and prompt length across models to balance output quality against API costs.
+        - generic [ref=e48]:
+          - generic [ref=e49]: "05"
+          - heading "Per-agent breakdown" [level=3] [ref=e50]
+          - paragraph [ref=e51]: See which agents are doing the work — lines changed, tokens spent, and estimated cost split out by Claude Code, Cursor, Codex, and more.
+        - generic [ref=e52]:
+          - generic [ref=e53]: "06"
+          - heading "Prompt length" [level=3] [ref=e54]
+          - paragraph [ref=e55]: Understand how developers interact with AI tools by measuring the amount of input and context they give AI.
+      - generic [ref=e56]:
+        - generic [ref=e57]: Supported AI Agents
+        - heading "Works with all your tools" [level=2] [ref=e58]
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - img "Claude Code" [ref=e61]
+            - text: Claude Code
+          - generic [ref=e62]:
+            - img "Codex" [ref=e63]
+            - text: Codex
+          - generic [ref=e64]:
+            - img "Continue" [ref=e65]
+            - text: Continue
+          - generic [ref=e66]:
+            - img "Cody" [ref=e67]
+            - text: Cody
+          - generic [ref=e68]:
+            - img "Roo Code" [ref=e69]
+            - text: Roo Code
+          - generic [ref=e70]:
+            - img "OpenCode" [ref=e71]
+            - text: OpenCode
+          - generic [ref=e72]:
+            - img "GitHub Copilot" [ref=e73]
+            - text: GitHub Copilot
+          - generic [ref=e74]:
+            - img "Cursor" [ref=e75]
+            - text: Cursor
+          - generic [ref=e76]:
+            - img "Windsurf" [ref=e77]
+            - text: Windsurf
+          - generic [ref=e78]:
+            - img "Qoder" [ref=e79]
+            - text: Qoder
+          - generic [ref=e80]:
+            - img "Kiro" [ref=e81]
+            - text: Kiro
+          - generic [ref=e82]:
+            - img "Cline" [ref=e83]
+            - text: Cline
+          - generic [ref=e84]:
+            - img "Gemini" [ref=e85]
+            - text: Gemini
+          - generic [ref=e86]:
+            - img "Pi" [ref=e87]
+            - text: Pi
+          - generic [ref=e88]:
+            - img "Goose" [ref=e89]
+            - text: Goose
+    - generic [ref=e91]:
+      - generic [ref=e92]: Why it matters
+      - heading "Turn AI metrics into clear engineering decisions" [level=2] [ref=e93]
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - heading "Developers" [level=3] [ref=e96]
+          - paragraph [ref=e97]: See which AI tools actually help you ship faster, where they introduce rework, and how your habits are changing over time.
+        - generic [ref=e98]:
+          - heading "Team leads" [level=3] [ref=e99]
+          - paragraph [ref=e100]: Understand adoption, output, and trends across the team without relying on anecdotes, surveys, or self-reported usage.
+        - generic [ref=e101]:
+          - heading "Decision Makers" [level=3] [ref=e102]
+          - paragraph [ref=e103]: Justify your AI spend with objective data. Evaluate tool adoption and ROI to build a data-driven AI integration strategy.
+    - generic [ref=e105]:
+      - generic [ref=e106]:
+        - generic [ref=e107]: Trusted by 500k+ developers
+        - heading "What devs are saying" [level=2] [ref=e108]
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - paragraph [ref=e111]: “WakaTime is the only tool that shows me the ROI on AI. I can see how much code is AI-generated, right down to the file level.”
+          - generic [ref=e112]:
+            - img "TJ Holowaychuk" [ref=e113]
+            - generic [ref=e114]:
+              - generic [ref=e115]: TJ Holowaychuk
+              - generic [ref=e116]: Creator of Express.js
+        - generic [ref=e117]:
+          - paragraph [ref=e118]: “WakaTime is brilliant! It tells me which models produce the most code using the least amount of tokens.”
+          - generic [ref=e119]:
+            - img "Maya Wright" [ref=e120]
+            - generic [ref=e121]:
+              - generic [ref=e122]: Maya Wright
+              - generic [ref=e123]: Software engineer
+        - generic [ref=e124]:
+          - paragraph [ref=e125]: “You can't optimize what you don't measure. WakaTime gives me the data to decide which AI models actually help me ship faster.”
+          - generic [ref=e126]:
+            - img "Robert Adams" [ref=e127]
+            - generic [ref=e128]:
+              - generic [ref=e129]: Robert Adams
+              - generic [ref=e130]: Software engineer
+    - generic [ref=e132]:
+      - generic [ref=e133]: Works with 100+ editors, IDEs, and terminals
+      - heading "Your coding stats, self-hosted and free" [level=2] [ref=e134]
+      - paragraph [ref=e135]: WakaFree syncs your WakaTime data into your own database, so your dashboards, history, and AI metrics stay yours — forever.
+      - link "Open your dashboard" [ref=e136] [cursor=pointer]:
+        - /url: /dashboard
+    - contentinfo [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - generic [ref=e141]: WakaFree
+          - paragraph [ref=e142]: Self-hosted coding time tracker, powered by your WakaTime data.
+        - generic [ref=e143]:
+          - generic [ref=e144]: Product
+          - list [ref=e145]:
+            - listitem [ref=e146]:
+              - link "Dashboard" [ref=e147] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e148]:
+              - link "Projects" [ref=e149] [cursor=pointer]:
+                - /url: /dashboard/projects
+        - generic [ref=e150]:
+          - generic [ref=e151]: Learn
+          - list [ref=e152]:
+            - listitem [ref=e153]:
+              - link "API Docs" [ref=e154] [cursor=pointer]:
+                - /url: https://wakatime.com/developers
+            - listitem [ref=e155]:
+              - link "Plugins" [ref=e156] [cursor=pointer]:
+                - /url: https://wakatime.com/plugins
+        - generic [ref=e157]:
+          - generic [ref=e158]: Community
+          - list [ref=e159]:
+            - listitem [ref=e160]:
+              - link "GitHub" [ref=e161] [cursor=pointer]:
+                - /url: https://github.com
+            - listitem [ref=e162]:
+              - link "WakaTime" [ref=e163] [cursor=pointer]:
+                - /url: https://wakatime.com
+      - generic [ref=e164]: © 2026 WakaFree
+  - alert [ref=e165]

@@ -8,9 +8,10 @@ import {
   Legend,
 } from 'recharts'
 
+// WakaTime (c3/d3) default chart palette
 const COLORS = [
-  '#6366f1', '#8b5cf6', '#60a5fa', '#34d399',
-  '#fbbf24', '#f87171', '#fb923c', '#a78bfa',
+  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+  '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
 ]
 
 interface Props {
@@ -26,7 +27,7 @@ function fmt(s: number): string {
 export default function BreakdownPie({ data }: Props) {
   if (data.length === 0) {
     return (
-      <p className="text-gray-500 text-sm text-center py-10">No data yet.</p>
+      <p className="text-[#7f8ea3] text-sm text-center py-10">No data yet.</p>
     )
   }
 
@@ -55,15 +56,15 @@ export default function BreakdownPie({ data }: Props) {
         <Tooltip
           formatter={(_value, _name, props) => [props.payload.label, props.name]}
           contentStyle={{
-            backgroundColor: '#1f2937',
-            border: 'none',
+            backgroundColor: '#030711',
+            border: '1px solid #1d283a',
             borderRadius: '8px',
-            color: '#f9fafb',
+            color: '#e1e7ef',
           }}
         />
         <Legend
           formatter={(value) => (
-            <span style={{ color: '#9ca3af', fontSize: '12px' }}>{value}</span>
+            <span style={{ color: '#7f8ea3', fontSize: '12px' }}>{value}</span>
           )}
         />
       </PieChart>

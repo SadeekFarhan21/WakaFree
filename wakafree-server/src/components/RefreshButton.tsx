@@ -29,11 +29,11 @@ export default function RefreshButton() {
 
   return (
     <div className="flex items-center gap-3">
-      {status && <span className="text-xs text-gray-500">{status}</span>}
+      {status && <span className="text-xs text-[#7f8ea3]">{status}</span>}
       <button
         onClick={refresh}
         disabled={busy}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-700 text-gray-200 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border border-[#1d283a] bg-[#0c1117] text-[#e1e7ef] hover:bg-[#1d283a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         <svg
           className={`w-4 h-4 ${busy ? 'animate-spin' : ''}`}

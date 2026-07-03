@@ -212,19 +212,19 @@ function buildWeekdayData(rows: DailyRow[]) {
 
 function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-      <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">{label}</p>
-      <p className="text-2xl font-bold text-white">{value}</p>
-      {sub && <p className="text-gray-500 text-xs mt-1">{sub}</p>}
+    <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-4">
+      <p className="text-[#7f8ea3] text-xs uppercase tracking-wider mb-2">{label}</p>
+      <p className="text-2xl font-bold text-[#e1e7ef]">{value}</p>
+      {sub && <p className="text-[#7f8ea3] text-xs mt-1">{sub}</p>}
     </div>
   )
 }
 
 function MetricPill({ value, label }: { value: string | number; label: string }) {
   return (
-    <div className="bg-gray-800 rounded-lg p-3">
-      <p className="text-gray-400 text-xs uppercase mb-1">{label}</p>
-      <p className="text-lg font-semibold text-white">{value}</p>
+    <div className="border border-[#1d283a] rounded-lg p-3">
+      <p className="text-[#7f8ea3] text-xs uppercase mb-1">{label}</p>
+      <p className="text-lg font-semibold text-[#e1e7ef]">{value}</p>
     </div>
   )
 }
@@ -234,16 +234,16 @@ export default async function DashboardPage() {
 
   if (!data) {
     return (
-      <main className="min-h-screen bg-gray-950 p-6 max-w-7xl mx-auto flex items-center justify-center">
+      <main className="min-h-screen bg-[#0c1117] p-6 max-w-7xl mx-auto flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-lg font-bold mx-auto mb-4">W</div>
-          <h1 className="text-white text-xl font-semibold mb-2">No data yet</h1>
-          <p className="text-gray-400 text-sm max-w-sm">
+          <div className="w-10 h-10 bg-[#2595ff] rounded-xl flex items-center justify-center text-lg font-bold mx-auto mb-4">W</div>
+          <h1 className="text-[#e1e7ef] text-xl font-semibold mb-2">No data yet</h1>
+          <p className="text-[#7f8ea3] text-sm max-w-sm">
             Trigger your first sync by visiting{' '}
-            <code className="bg-gray-800 px-1 rounded text-indigo-300">/api/wakatime/sync</code>.
+            <code className="bg-[#1d283a] px-1 rounded text-[#3b82f6]">/api/wakatime/sync</code>.
             <br />
             To backfill history:{' '}
-            <code className="bg-gray-800 px-1 rounded text-indigo-300">/api/wakatime/sync?backfill=30</code>
+            <code className="bg-[#1d283a] px-1 rounded text-[#3b82f6]">/api/wakatime/sync?backfill=30</code>
           </p>
         </div>
       </main>
@@ -254,16 +254,16 @@ export default async function DashboardPage() {
     <main className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 mt-2">
-        <h1 className="text-2xl font-bold text-white">Activity Overview</h1>
+        <h1 className="text-2xl font-bold text-[#e1e7ef]">Activity Overview</h1>
         <RefreshButton />
       </div>
 
       {/* Activity Overview Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+      <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
-            <p className="text-gray-400 text-sm uppercase tracking-wide mb-2">Over the Last 7 Days</p>
-            <p className="text-5xl font-bold text-white">{formatSeconds(data.weekSeconds)}</p>
+            <p className="text-[#7f8ea3] text-sm uppercase tracking-wide mb-2">Over the Last 7 Days</p>
+            <p className="text-5xl font-bold text-[#e1e7ef]">{formatSeconds(data.weekSeconds)}</p>
           </div>
           <StatCard label="Current Day" value={data.currentDayText} />
           <StatCard label="Daily Average" value={formatSeconds(Math.round(data.weekSeconds / 7))} sub="over 7 days" />
@@ -283,18 +283,18 @@ export default async function DashboardPage() {
 
       {/* Daily Timeline (from /durations) */}
       {data.timeline && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Timeline</h2>
-            <span className="text-xs text-gray-500">{data.timeline.date}</span>
+            <h2 className="text-lg font-semibold text-[#e1e7ef]">Timeline</h2>
+            <span className="text-xs text-[#7f8ea3]">{data.timeline.date}</span>
           </div>
           <TimelineChart date={data.timeline.date} blocks={data.timeline.blocks} />
         </div>
       )}
 
       {/* AI Coding Section */}
-      <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
-        <h2 className="text-lg font-semibold text-white mb-6">AI Coding</h2>
+      <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6 mb-8">
+        <h2 className="text-lg font-semibold text-[#e1e7ef] mb-6">AI Coding</h2>
         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
           <div className="md:col-span-2 flex items-center justify-center">
             <AICodingChart
@@ -313,17 +313,17 @@ export default async function DashboardPage() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Projects */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Projects</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Projects</h3>
           <div className="space-y-3">
             {data.topProjects.slice(0, 3).map((project) => (
               <div key={project.name}>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-white">{project.name}</span>
-                  <span className="text-xs text-gray-400">{formatSeconds(project.seconds)}</span>
+                  <span className="text-sm font-medium text-[#e1e7ef]">{project.name}</span>
+                  <span className="text-xs text-[#7f8ea3]">{formatSeconds(project.seconds)}</span>
                 </div>
-                <div className="h-2 bg-gray-800 rounded-full">
-                  <div className="h-2 bg-indigo-500 rounded-full" style={{ width: '100%' }} />
+                <div className="h-2 bg-[#1d283a] rounded-full">
+                  <div className="h-2 bg-[#2595ff] rounded-full" style={{ width: '100%' }} />
                 </div>
               </div>
             ))}
@@ -331,61 +331,61 @@ export default async function DashboardPage() {
         </div>
 
         {/* Categories */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Categories</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Categories</h3>
           <BreakdownPie data={data.topCategories} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Editors */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Editors</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Editors</h3>
           <BreakdownPie data={data.topEditors} />
         </div>
 
         {/* Languages */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Languages</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Languages</h3>
           <BreakdownPie data={data.topLanguages} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Operating Systems */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Operating Systems</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Operating Systems</h3>
           <BreakdownPie data={data.topOSs} />
         </div>
 
         {/* Machines */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Machines</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Machines</h3>
           <BreakdownPie data={data.topMachines} />
         </div>
       </div>
 
       {/* Daily Comparison and Weekdays */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Daily Activity</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Daily Activity</h3>
           <ActivityChart data={data.dailyActivity} />
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Weekdays</h3>
+        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+          <h3 className="text-base font-medium text-[#e1e7ef] text-center mb-4">Weekdays</h3>
           <WeekdaysChart data={data.weekdayData} />
         </div>
       </div>
 
       {/* Goals (from WakaTime /goals) */}
       <section className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-5">Goals</h2>
+        <h2 className="text-2xl font-bold text-[#e1e7ef] mb-5">Goals</h2>
         {data.goals.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <p className="text-gray-500 text-sm">
+          <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-6">
+            <p className="text-[#7f8ea3] text-sm">
               No goals set in WakaTime yet. Create one at{' '}
-              <span className="text-indigo-300">wakatime.com/goals</span> and it&apos;ll appear here on the next sync.
+              <span className="text-[#3b82f6]">wakatime.com/goals</span> and it&apos;ll appear here on the next sync.
             </p>
           </div>
         ) : (
@@ -393,14 +393,14 @@ export default async function DashboardPage() {
             {data.goals.map((g, i) => {
               const goal = g as { title?: string; type?: string; cumulative_status?: string; is_enabled?: boolean }
               return (
-                <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-5">
-                  <h3 className="font-semibold text-white mb-1">{goal.title ?? `Goal ${i + 1}`}</h3>
-                  {goal.type && <p className="text-xs text-gray-500 mb-2 capitalize">{goal.type.replace(/_/g, ' ')}</p>}
+                <div key={i} className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-5">
+                  <h3 className="font-semibold text-[#e1e7ef] mb-1">{goal.title ?? `Goal ${i + 1}`}</h3>
+                  {goal.type && <p className="text-xs text-[#7f8ea3] mb-2 capitalize">{goal.type.replace(/_/g, ' ')}</p>}
                   <span
                     className={`inline-block text-xs px-2 py-0.5 rounded-full ${
                       goal.cumulative_status === 'success'
                         ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-gray-700 text-gray-300'
+                        : 'bg-[#1d283a] text-[#7f8ea3]'
                     }`}
                   >
                     {goal.cumulative_status ?? (goal.is_enabled ? 'active' : 'inactive')}
@@ -416,7 +416,7 @@ export default async function DashboardPage() {
       <div className="flex justify-center">
         <a
           href="/dashboard/projects"
-          className="text-sm text-indigo-400 hover:text-indigo-300 font-medium"
+          className="text-sm text-[#3b82f6] hover:text-[#2595ff] font-medium"
         >
           View detailed per-project breakdown →
         </a>
