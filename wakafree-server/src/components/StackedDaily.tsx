@@ -10,17 +10,17 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-// Cohesive warm ramp (matches BreakdownPie)
+// Red-lead + slate palette (matches BreakdownPie)
 const PROJECT_COLORS = [
-  '#ef4444', '#f97316', '#fb7185', '#fdba74', '#e11d48',
-  '#fca5a5', '#c2410c', '#fda4af', '#9f1239', '#94a3b8',
+  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
+  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
 ]
 
 // Fixed hues for the three WakaTime categories; extras fall back to the palette
 const CATEGORY_COLORS: Record<string, string> = {
   'AI Coding': '#ef4444',
-  Coding: '#f97316',
-  'Writing Docs': '#fb7185',
+  Coding: '#94a3b8',
+  'Writing Docs': '#cbd5e1',
 }
 
 export interface DailyStackRow {

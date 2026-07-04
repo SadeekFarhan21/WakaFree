@@ -488,7 +488,7 @@ export default async function DashboardPage({
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Projects</h3>
           <div className="space-y-3">
-            {data.topProjects.slice(0, 5).map((project) => (
+            {data.topProjects.slice(0, 5).map((project, i) => (
               <div key={project.name}>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-onsurface">{project.name}</span>
@@ -496,8 +496,11 @@ export default async function DashboardPage({
                 </div>
                 <div className="h-1.5 bg-container-high rounded-full">
                   <div
-                    className="h-1.5 bg-primary-dim rounded-full"
-                    style={{ width: `${Math.round((project.seconds / data.topProjects[0].seconds) * 100)}%` }}
+                    className="h-1.5 rounded-full"
+                    style={{
+                      width: `${Math.round((project.seconds / data.topProjects[0].seconds) * 100)}%`,
+                      backgroundColor: i === 0 ? '#ef4444' : '#64748b',
+                    }}
                   />
                 </div>
               </div>

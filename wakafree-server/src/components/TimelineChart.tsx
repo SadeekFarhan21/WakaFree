@@ -29,10 +29,10 @@ function mergeBlocks(blocks: DurationBlock[], timeoutSeconds: number): DurationB
   return merged
 }
 
-// Cohesive warm ramp (matches BreakdownPie)
+// Red-lead + slate palette (matches BreakdownPie)
 const PALETTE = [
-  '#ef4444', '#f97316', '#fb7185', '#fdba74', '#e11d48',
-  '#fca5a5', '#c2410c', '#fda4af', '#9f1239', '#94a3b8',
+  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
+  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
 ]
 
 // Hour labels across the day (12a, 3a, 6a, ... 12a)

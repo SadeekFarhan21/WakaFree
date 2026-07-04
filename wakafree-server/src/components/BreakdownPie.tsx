@@ -2,10 +2,10 @@
 import { useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
-// Cohesive warm ramp (red → orange → rose), ordered strongest-first
+// Red marks the top-ranked item; the rest recede into slate steps
 const COLORS = [
-  '#ef4444', '#f97316', '#fb7185', '#fdba74', '#e11d48',
-  '#fca5a5', '#c2410c', '#fda4af', '#9f1239', '#94a3b8',
+  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
+  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
 ]
 
 interface Props {
