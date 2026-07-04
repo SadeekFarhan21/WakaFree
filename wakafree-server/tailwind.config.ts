@@ -31,9 +31,9 @@ const config: Config = {
         },
         line: '#272d36',
         primary: {
-          DEFAULT: '#f87171',
-          dim: '#ef4444',
-          on: '#450a0a',
+          DEFAULT: '#b48ead',
+          dim: '#9d7794',
+          on: '#2b1f29',
         },
         secondary: {
           DEFAULT: '#c2c8d2',

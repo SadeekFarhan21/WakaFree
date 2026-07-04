@@ -39,7 +39,7 @@ export function AICodingChart({ aiPercent, size = 200 }: { aiPercent: number; si
             startAngle={90}
             endAngle={450}
           >
-            <Cell fill="#ef4444" />
+            <Cell fill="#b48ead" />
             <Cell fill="#2a303a" />
           </Pie>
         </PieChart>
@@ -98,7 +98,7 @@ export function WeekdaysChart({ data }: { data: Array<{ day: string; hours: numb
         />
         <Bar isAnimationActive={false} dataKey="hours" radius={[3, 3, 0, 0]}>
           {data.map((d, i) => (
-            <Cell key={i} fill={d.hours === max ? '#ef4444' : 'url(#weekdayFill)'} />
+            <Cell key={i} fill={d.hours === max ? '#b48ead' : 'url(#weekdayFill)'} />
           ))}
         </Bar>
       </BarChart>
@@ -123,7 +123,7 @@ export function TodayGauge({
   const ratio = avgSeconds > 0 ? todaySeconds / avgSeconds : 0
   const pct = Math.round(Math.abs(ratio - 1) * 100)
   const down = ratio < 1
-  const color = down ? '#fb7185' : '#34d399'
+  const color = down ? '#bf616a' : '#a3be8c'
   const gauge = [
     { value: Math.min(ratio, 1) },
     { value: 1 - Math.min(ratio, 1) },
@@ -215,16 +215,16 @@ export function AiHumanByDayChart({
           />
           <Bar isAnimationActive={false} dataKey="humanAdd" name="Human Additions" stackId="human" fill="#94a3b8" />
           <Bar isAnimationActive={false} dataKey="humanDel" name="Human Deletions" stackId="human" fill="#94a3b8" fillOpacity={0.35} />
-          <Bar isAnimationActive={false} dataKey="aiAdd" name="AI Additions" stackId="ai" fill="#ef4444" />
-          <Bar isAnimationActive={false} dataKey="aiDel" name="AI Deletions" stackId="ai" fill="#ef4444" fillOpacity={0.35} />
+          <Bar isAnimationActive={false} dataKey="aiAdd" name="AI Additions" stackId="ai" fill="#b48ead" />
+          <Bar isAnimationActive={false} dataKey="aiDel" name="AI Deletions" stackId="ai" fill="#b48ead" fillOpacity={0.35} />
         </BarChart>
       </ResponsiveContainer>
       <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {[
           ['Human Additions', '#94a3b8', 1],
           ['Human Deletions', '#94a3b8', 0.35],
-          ['AI Additions', '#ef4444', 1],
-          ['AI Deletions', '#ef4444', 0.35],
+          ['AI Additions', '#b48ead', 1],
+          ['AI Deletions', '#b48ead', 0.35],
         ].map(([label, color, opacity]) => (
           <span key={label as string} className="flex items-center gap-1.5">
             <span

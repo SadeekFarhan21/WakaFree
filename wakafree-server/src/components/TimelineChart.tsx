@@ -29,10 +29,10 @@ function mergeBlocks(blocks: DurationBlock[], timeoutSeconds: number): DurationB
   return merged
 }
 
-// Red-lead + slate palette (matches BreakdownPie)
+// Muted Nord-style family (matches BreakdownPie)
 const PALETTE = [
-  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
-  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
+  '#b48ead', '#88c0d0', '#a3be8c', '#ebcb8b', '#d08770',
+  '#8fbcbb', '#81a1c1', '#bf616a', '#d5b3cf', '#94a3b8',
 ]
 
 // Hour labels across the day (12a, 3a, 6a, ... 12a)

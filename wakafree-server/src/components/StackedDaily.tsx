@@ -10,17 +10,17 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-// Red-lead + slate palette (matches BreakdownPie)
+// Muted Nord-style family (matches BreakdownPie)
 const PROJECT_COLORS = [
-  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
-  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
+  '#b48ead', '#88c0d0', '#a3be8c', '#ebcb8b', '#d08770',
+  '#8fbcbb', '#81a1c1', '#bf616a', '#d5b3cf', '#94a3b8',
 ]
 
 // Fixed hues for the three WakaTime categories; extras fall back to the palette
 const CATEGORY_COLORS: Record<string, string> = {
-  'AI Coding': '#ef4444',
-  Coding: '#94a3b8',
-  'Writing Docs': '#cbd5e1',
+  'AI Coding': '#b48ead',
+  Coding: '#88c0d0',
+  'Writing Docs': '#a3be8c',
 }
 
 export interface DailyStackRow {

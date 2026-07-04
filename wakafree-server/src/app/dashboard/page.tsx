@@ -410,7 +410,7 @@ export default async function DashboardPage({
               label="AI lines"
               value={compactNumber(data.totalAiAdditions)}
               bar={aiPct}
-              barColor="#ef4444"
+              barColor="#b48ead"
             />
             <AIStat
               label="Human lines"
@@ -499,7 +499,7 @@ export default async function DashboardPage({
                     className="h-1.5 rounded-full"
                     style={{
                       width: `${Math.round((project.seconds / data.topProjects[0].seconds) * 100)}%`,
-                      backgroundColor: i === 0 ? '#ef4444' : '#64748b',
+                      backgroundColor: i === 0 ? '#b48ead' : '#64748b',
                     }}
                   />
                 </div>
@@ -606,7 +606,7 @@ export default async function DashboardPage({
                   <span
                     className={`inline-block text-xs px-2 py-0.5 rounded-full ${
                       goal.cumulative_status === 'success'
-                        ? 'bg-[#86c7a5]/15 text-[#86c7a5]'
+                        ? 'bg-[#a3be8c]/15 text-[#a3be8c]'
                         : 'bg-container-high text-onsurface-variant'
                     }`}
                   >

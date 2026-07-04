@@ -2,10 +2,10 @@
 import { useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
-// Red marks the top-ranked item; the rest recede into slate steps
+// Muted Nord-style family: matched saturation, distinct hues
 const COLORS = [
-  '#ef4444', '#94a3b8', '#64748b', '#cbd5e1', '#475569',
-  '#fca5a5', '#7c8798', '#e2e8f0', '#556070', '#38424f',
+  '#b48ead', '#88c0d0', '#a3be8c', '#ebcb8b', '#d08770',
+  '#8fbcbb', '#81a1c1', '#bf616a', '#d5b3cf', '#94a3b8',
 ]
 
 interface Props {
