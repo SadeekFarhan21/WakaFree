@@ -127,13 +127,28 @@ export async function syncRange(
   const json = (await res.json()) as { data: Array<{ range: { date: string } }> }
   const days = json.data ?? []
 
-  // 2. Per-day durations (the timeline) — one call per date, in parallel.
+  // 2. Per-day durations (the timeline) — project-sliced plus every extra
+  // slice the dashboard's "Segment By" picker offers, all in parallel.
+  const TIMELINE_SLICES = ['category', 'language', 'editor', 'os', 'machine'] as const
   const durationsByDate = new Map<string, unknown>()
+  const slicesByDate = new Map<string, Record<string, unknown>>()
   await Promise.all(
-    days.map(async (day) => {
+    days.flatMap((day) => {
       const d = day.range.date
-      const durations = await fetchWakaFull(`/durations?date=${d}`)
-      if (durations !== null) durationsByDate.set(d, durations)
+      return [
+        fetchWakaFull(`/durations?date=${d}`).then((durations) => {
+          if (durations !== null) durationsByDate.set(d, durations)
+        }),
+        ...TIMELINE_SLICES.map((slice) =>
+          fetchWakaFull(`/durations?date=${d}&slice_by=${slice}`).then((durations) => {
+            if (durations !== null) {
+              const cur = slicesByDate.get(d) ?? {}
+              cur[slice] = durations
+              slicesByDate.set(d, cur)
+            }
+          })
+        ),
+      ]
     })
   )
 
@@ -142,6 +157,8 @@ export async function syncRange(
     date: day.range.date,
     data: day,
     durations: durationsByDate.get(day.range.date) ?? null,
+    durations_category: slicesByDate.get(day.range.date)?.category ?? null,
+    durations_slices: slicesByDate.get(day.range.date) ?? null,
     synced_at,
   }))
 

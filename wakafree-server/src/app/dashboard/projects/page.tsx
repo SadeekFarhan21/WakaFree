@@ -65,8 +65,8 @@ export default async function ProjectsPage() {
   if (!data || data.projects.length === 0) {
     return (
       <main className="p-6 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold text-[#e1e7ef] mt-2 mb-2">Projects</h1>
-        <p className="text-[#7f8ea3] text-sm">No project data yet. Run a sync first.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-onsurface mt-2 mb-2">Projects</h1>
+        <p className="text-outline text-sm">No project data yet. Run a sync first.</p>
       </main>
     )
   }
@@ -74,25 +74,25 @@ export default async function ProjectsPage() {
   return (
     <main className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6 mt-2">
-        <h1 className="text-2xl font-bold text-[#e1e7ef]">Projects</h1>
-        <p className="text-sm text-[#7f8ea3]">
+        <h1 className="text-2xl font-semibold tracking-tight text-onsurface">Projects</h1>
+        <p className="text-sm text-outline">
           {data.projects.length} projects · across {data.daysStored} days
         </p>
       </div>
 
       {/* Summary strip */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-4">
-          <p className="text-[#7f8ea3] text-xs uppercase tracking-wider mb-2">Total Tracked</p>
-          <p className="text-2xl font-bold text-[#e1e7ef]">{formatSeconds(data.totalSeconds)}</p>
+        <div className="bg-container-low border border-line rounded-lg transition-colors hover:border-outline-variant p-4">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-2">Total Tracked</p>
+          <p className="text-2xl font-semibold tracking-tight text-onsurface">{formatSeconds(data.totalSeconds)}</p>
         </div>
-        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-4">
-          <p className="text-[#7f8ea3] text-xs uppercase tracking-wider mb-2">Projects</p>
-          <p className="text-2xl font-bold text-[#e1e7ef]">{data.projects.length}</p>
+        <div className="bg-container-low border border-line rounded-lg transition-colors hover:border-outline-variant p-4">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-2">Projects</p>
+          <p className="text-2xl font-semibold tracking-tight text-onsurface">{data.projects.length}</p>
         </div>
-        <div className="bg-[#0c1117] border border-[#1d283a] rounded-lg p-4">
-          <p className="text-[#7f8ea3] text-xs uppercase tracking-wider mb-2">Total AI Spend</p>
-          <p className="text-2xl font-bold text-[#e1e7ef]">${data.totalSpend.toFixed(2)}</p>
+        <div className="bg-container-low border border-line rounded-lg transition-colors hover:border-outline-variant p-4">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-2">Total AI Spend</p>
+          <p className="text-2xl font-semibold tracking-tight text-onsurface">${data.totalSpend.toFixed(2)}</p>
         </div>
       </div>
 

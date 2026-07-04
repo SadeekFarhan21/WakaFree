@@ -1,27 +1,27 @@
-import Image from 'next/image'
-import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+
+function CodeMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  )
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#0c1117]">
-      {/* WakaTime-style dark navbar */}
-      <nav className="border-b border-[#373737] bg-[#030711]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 py-3 text-[#e1e7ef]">
-              <Image src="/landing/wakatime-white.svg" alt="WakaFree" width={20} height={20} />
-              <span className="text-base font-medium">WakaFree</span>
-            </Link>
-            <DashboardTabs />
-          </div>
-          <a
-            href="https://wakatime.com/plugins"
-            className="hidden text-sm text-[#7f8ea3] hover:text-[#e1e7ef] sm:block"
-          >
-            Plugins
+    <div className="min-h-screen bg-surface">
+      <nav className="border-b border-outline-variant bg-surface/80 backdrop-blur-xl">
+        {/* Row 1: brand */}
+        <div className="mx-auto flex max-w-7xl items-center px-6 pt-3 pb-2">
+          <a href="/dashboard" className="flex items-center gap-2 text-onsurface">
+            <CodeMark />
+            <span className="text-lg font-semibold tracking-tight">WakaFree</span>
           </a>
         </div>
+        {/* Row 2: section tabs */}
+        <DashboardTabs />
       </nav>
       {children}
     </div>

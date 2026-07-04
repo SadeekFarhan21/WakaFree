@@ -43,6 +43,9 @@ CREATE INDEX IF NOT EXISTS idx_heartbeats_language ON heartbeats(user_id, langua
 CREATE TABLE IF NOT EXISTS waka_daily (
   date DATE PRIMARY KEY,
   data JSONB NOT NULL,
+  durations JSONB,           -- /durations (timeline blocks, sliced by project)
+  durations_category JSONB,  -- /durations?slice_by=category (AI Coding vs Coding)
+  durations_slices JSONB,    -- map of slice_by → /durations (category/language/editor/os/machine)
   synced_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_waka_daily_date ON waka_daily(date DESC);
