@@ -410,13 +410,13 @@ export default async function DashboardPage({
               label="AI lines"
               value={compactNumber(data.totalAiAdditions)}
               bar={aiPct}
-              barColor="#f59e0b"
+              barColor="#ef4444"
             />
             <AIStat
               label="Human lines"
               value={compactNumber(data.totalHumanAdditions)}
               bar={100 - aiPct}
-              barColor="#34d399"
+              barColor="#94a3b8"
             />
             <AIStat
               label="Tokens"
@@ -509,7 +509,7 @@ export default async function DashboardPage({
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Agents</h3>
           {data.topAgents.length > 0 ? (
-            <BreakdownPie data={data.topAgents} valueKind="lines" paletteOffset={0} />
+            <BreakdownPie data={data.topAgents} valueKind="lines" />
           ) : (
             <p className="text-outline text-sm text-center py-10">No agent data yet.</p>
           )}
@@ -520,13 +520,13 @@ export default async function DashboardPage({
         {/* Categories */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Categories</h3>
-          <BreakdownPie data={data.topCategories} paletteOffset={1} />
+          <BreakdownPie data={data.topCategories} />
         </div>
 
         {/* Editors */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Editors</h3>
-          <BreakdownPie data={data.topEditors} paletteOffset={2} />
+          <BreakdownPie data={data.topEditors} />
         </div>
       </div>
 
@@ -534,13 +534,13 @@ export default async function DashboardPage({
         {/* Languages */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Languages</h3>
-          <BreakdownPie data={data.topLanguages} paletteOffset={3} />
+          <BreakdownPie data={data.topLanguages} />
         </div>
 
         {/* Operating Systems */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Operating Systems</h3>
-          <BreakdownPie data={data.topOSs} paletteOffset={4} />
+          <BreakdownPie data={data.topOSs} />
         </div>
       </div>
 
@@ -548,7 +548,7 @@ export default async function DashboardPage({
         {/* Machines */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Machines</h3>
-          <BreakdownPie data={data.topMachines} paletteOffset={5} />
+          <BreakdownPie data={data.topMachines} />
         </div>
 
         {/* Today vs daily average gauge */}

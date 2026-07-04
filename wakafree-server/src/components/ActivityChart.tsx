@@ -24,8 +24,8 @@ export default function ActivityChart({ data }: Props) {
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
         <defs>
           <linearGradient id="activityFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
+            <stop offset="0%" stopColor="#f87171" />
+            <stop offset="100%" stopColor="#dc2626" stopOpacity={0.8} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />

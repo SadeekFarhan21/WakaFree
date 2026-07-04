@@ -39,7 +39,7 @@ export function AICodingChart({ aiPercent, size = 200 }: { aiPercent: number; si
             startAngle={90}
             endAngle={450}
           >
-            <Cell fill="#fbbf24" />
+            <Cell fill="#ef4444" />
             <Cell fill="#2a303a" />
           </Pie>
         </PieChart>
@@ -64,8 +64,8 @@ export function WeekdaysChart({ data }: { data: Array<{ day: string; hours: numb
       <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
         <defs>
           <linearGradient id="weekdayFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a78bfa" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.75} />
+            <stop offset="0%" stopColor="#64748b" />
+            <stop offset="100%" stopColor="#475569" stopOpacity={0.9} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -98,7 +98,7 @@ export function WeekdaysChart({ data }: { data: Array<{ day: string; hours: numb
         />
         <Bar isAnimationActive={false} dataKey="hours" radius={[3, 3, 0, 0]}>
           {data.map((d, i) => (
-            <Cell key={i} fill={d.hours === max ? '#fbbf24' : 'url(#weekdayFill)'} />
+            <Cell key={i} fill={d.hours === max ? '#ef4444' : 'url(#weekdayFill)'} />
           ))}
         </Bar>
       </BarChart>
@@ -213,18 +213,18 @@ export function AiHumanByDayChart({
               fontSize: '12px',
             }}
           />
-          <Bar isAnimationActive={false} dataKey="humanAdd" name="Human Additions" stackId="human" fill="#34d399" />
-          <Bar isAnimationActive={false} dataKey="humanDel" name="Human Deletions" stackId="human" fill="#34d399" fillOpacity={0.35} />
-          <Bar isAnimationActive={false} dataKey="aiAdd" name="AI Additions" stackId="ai" fill="#f59e0b" />
-          <Bar isAnimationActive={false} dataKey="aiDel" name="AI Deletions" stackId="ai" fill="#f59e0b" fillOpacity={0.35} />
+          <Bar isAnimationActive={false} dataKey="humanAdd" name="Human Additions" stackId="human" fill="#94a3b8" />
+          <Bar isAnimationActive={false} dataKey="humanDel" name="Human Deletions" stackId="human" fill="#94a3b8" fillOpacity={0.35} />
+          <Bar isAnimationActive={false} dataKey="aiAdd" name="AI Additions" stackId="ai" fill="#ef4444" />
+          <Bar isAnimationActive={false} dataKey="aiDel" name="AI Deletions" stackId="ai" fill="#ef4444" fillOpacity={0.35} />
         </BarChart>
       </ResponsiveContainer>
       <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {[
-          ['Human Additions', '#34d399', 1],
-          ['Human Deletions', '#34d399', 0.35],
-          ['AI Additions', '#f59e0b', 1],
-          ['AI Deletions', '#f59e0b', 0.35],
+          ['Human Additions', '#94a3b8', 1],
+          ['Human Deletions', '#94a3b8', 0.35],
+          ['AI Additions', '#ef4444', 1],
+          ['AI Deletions', '#ef4444', 0.35],
         ].map(([label, color, opacity]) => (
           <span key={label as string} className="flex items-center gap-1.5">
             <span
