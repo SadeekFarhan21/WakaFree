@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen bg-surface">
       <nav className="border-b border-outline-variant bg-surface/80 backdrop-blur-xl">
         {/* Row 1: brand */}
-        <div className="mx-auto flex max-w-7xl items-center px-6 pt-3 pb-2">
+        <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6 pt-3 pb-2">
           <a href="/dashboard" className="flex items-center gap-2 text-onsurface">
             <CodeMark />
             <span className="text-lg font-semibold tracking-tight">WakaFree</span>

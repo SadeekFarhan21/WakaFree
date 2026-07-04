@@ -51,15 +51,15 @@ export default function DashboardTabs() {
   }
 
   return (
-    <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-      <div className="flex items-center">
+    <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="flex items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tab) => {
           const active = isActive(tab.href)
           return (
             <Link
               key={tab.label}
               href={tab.href}
-              className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[13px] transition-colors ${active
+              className={`flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-[13px] transition-colors ${active
                   ? 'border-primary-dim font-medium text-onsurface'
                   : 'border-transparent text-outline hover:text-onsurface-variant'
                 }`}

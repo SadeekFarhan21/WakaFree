@@ -350,9 +350,9 @@ export default async function DashboardPage({
   }
 
   return (
-    <main className="p-6 max-w-7xl mx-auto">
+    <main className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 mt-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-8 mt-2">
         <div>
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-1">
             WakaFree Dashboard
@@ -442,8 +442,8 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* Daily stacks: projects + categories (last 7 days) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {/* Daily stacks: projects + categories — hidden on phones */}
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface mb-4">Projects</h3>
           <ProjectsDailyChart data={data.projectDaily} seriesKeys={data.projectStackKeys} />
@@ -461,7 +461,7 @@ export default async function DashboardPage({
 
       {/* Daily timelines: by project + segmentable, both date-navigable */}
       {data.timelineInitial && (
-        <div id="timeline" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div id="timeline" className="scroll-mt-24 hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="bg-container-low border border-line rounded-lg p-6">
             <TimelineCard
               variant="projects"
@@ -563,8 +563,8 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* AI vs Human by day + Weekdays */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {/* AI vs Human by day + Weekdays — hidden on phones */}
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">AI vs Human by Day</h3>
           <AiHumanByDayChart data={data.aiHumanDaily} />
@@ -576,8 +576,8 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* Full activity history */}
-      <div className="bg-container-low border border-line rounded-lg p-6 mb-8">
+      {/* Full activity history — hidden on phones */}
+      <div className="hidden md:block bg-container-low border border-line rounded-lg p-6 mb-8">
         <h3 className="text-base font-medium text-onsurface text-center mb-4">Daily Activity</h3>
         <ActivityChart data={data.dailyActivity} />
       </div>
