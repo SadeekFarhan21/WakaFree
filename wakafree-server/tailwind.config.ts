@@ -45,7 +45,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-geist)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        mono: ['var(--font-geist)', 'system-ui', 'sans-serif'],
       },
     },
   },

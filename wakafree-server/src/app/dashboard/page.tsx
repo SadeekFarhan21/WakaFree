@@ -56,10 +56,18 @@ interface AIProjectEntry {
 // Friendly display names for machine hostnames
 const MACHINE_NAMES: Record<string, string> = {
   'Farhans-MacBook-Pro.local': 'Macbook M4 Pro',
-  'Farhans-MacBook-Pro-2.local': 'Macbook M3 Max',
+  'Farhans-MacBook-Pro-2.local': 'MacBook M4 Pro',
+  '80a9973d436b': 'MacBook M3 Max',
   'Farhans-MacBook-Neo.local': 'Macbook Neo',
   'codespaces-f027bb': 'GitHub Codespaces',
-  'ds-waf-dataplane-operations-agent-1lplh2ie': 'AWS EC2',
+  'dev-dsk-fsadeek-2a-5b2fc1da.us-west-2.amazon.com': 'Amazon Dev Desktop',
+}
+
+function machineDisplayName(name: string): string {
+  if (MACHINE_NAMES[name]) return MACHINE_NAMES[name]
+  // EC2 internal hostnames and dataplane agent boxes are all Amazon EC2.
+  if (/^ip-\d+-\d+-\d+-\d+\./.test(name) || /^ds-.*agent/.test(name)) return 'Amazon EC2'
+  return name
 }
 
 function aggregateEntries(rows: DailyRow[], key: keyof WakaDay, limit: number) {
@@ -149,6 +157,13 @@ async function getData(rangeDays: number) {
   const allTimeSeconds = typed.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0)
   const rangeSeconds = rangeRows.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0)
 
+  // Average of the 6 days before today — today is excluded so an in-progress
+  // day doesn't drag its own comparison baseline down.
+  const priorRows = typed.filter((r) => r.date !== todayLocal).slice(0, 6)
+  const priorAvgSeconds = priorRows.length
+    ? Math.round(priorRows.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0) / priorRows.length)
+    : 0
+
   const totalAiCost = rangeRows.reduce((s, r) => s + (r.data.grand_total?.ai_agent_total_cost ?? 0), 0)
   const totalAiAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.ai_additions ?? 0), 0)
   const totalHumanAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.human_additions ?? 0), 0)
@@ -226,6 +241,7 @@ async function getData(rangeDays: number) {
     totalAiAdditions,
     totalHumanAdditions,
     todaySeconds: todayRow?.data.grand_total?.total_seconds ?? 0,
+    priorAvgSeconds,
     aiInputTokens,
     aiOutputTokens,
     aiPrompts,
@@ -241,13 +257,19 @@ async function getData(rangeDays: number) {
     topLanguages: aggregateEntries(rangeRows, 'languages', 8),
     topEditors: aggregateEntries(rangeRows, 'editors', 6),
     topCategories: aggregateEntries(rangeRows, 'categories', 4),
-    topMachines: aggregateEntries(rangeRows, 'machines', 7)
-      .filter((m) => m.name !== 'Mac.lan')
-      .slice(0, 6)
-      .map((m) => ({
-        ...m,
-        name: MACHINE_NAMES[m.name] ?? m.name,
-      })),
+    topMachines: (() => {
+      // Merge hostnames that map to the same friendly name (e.g. all EC2 boxes).
+      const merged = new Map<string, number>()
+      for (const m of aggregateEntries(rangeRows, 'machines', 50)) {
+        if (m.name === 'Mac.lan') continue
+        const name = machineDisplayName(m.name)
+        merged.set(name, (merged.get(name) ?? 0) + m.seconds)
+      }
+      return Array.from(merged.entries())
+        .map(([name, seconds]) => ({ name, seconds }))
+        .sort((a, b) => b.seconds - a.seconds)
+        .slice(0, 6)
+    })(),
     topOSs: aggregateEntries(rangeRows, 'operating_systems', 6),
     // most recent day breakdown
     latestProjects: (latest.data.projects ?? []).slice(0, 8).map((p) => ({ name: p.name, seconds: p.total_seconds })),
@@ -558,7 +580,7 @@ export default async function DashboardPage({
         <div className="bg-container-low border border-line rounded-lg p-6">
           <TodayGauge
             todaySeconds={data.todaySeconds}
-            avgSeconds={Math.round(data.rangeSeconds / data.rangeDays)}
+            compareSeconds={data.priorAvgSeconds}
             todayText={data.currentDayText}
             avgText={formatSeconds(Math.round(data.rangeSeconds / data.rangeDays))}
             mostActiveLabel={data.mostActiveLabel}

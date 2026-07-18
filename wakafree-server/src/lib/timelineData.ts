@@ -29,10 +29,14 @@ export interface TimelineRow {
 const MACHINE_ALIASES: Record<string, string> = {
   'Farhans-MacBook-Pro-2.local': 'MacBook M4 Pro',
   '80a9973d436b': 'MacBook M3 Max',
+  'dev-dsk-fsadeek-2a-5b2fc1da.us-west-2.amazon.com': 'Amazon Dev Desktop',
 }
 
 function normalizeMachineName(name: string): string {
-  return MACHINE_ALIASES[name] ?? name
+  if (MACHINE_ALIASES[name]) return MACHINE_ALIASES[name]
+  // EC2 internal hostnames and dataplane agent boxes are all Amazon EC2.
+  if (/^ip-\d+-\d+-\d+-\d+\./.test(name) || /^ds-.*agent/.test(name)) return 'Amazon EC2'
+  return name
 }
 
 // Each slice's blocks carry their own field name (category, language, ...).

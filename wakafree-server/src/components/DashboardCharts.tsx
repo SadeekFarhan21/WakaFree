@@ -106,21 +106,22 @@ export function WeekdaysChart({ data }: { data: Array<{ day: string; hours: numb
   )
 }
 
-// Semicircle gauge comparing today against the 7-day daily average.
+// Semicircle gauge comparing today against the average of the past 6 days
+// (compareSeconds), while displaying the range's daily average (avgText).
 export function TodayGauge({
   todaySeconds,
-  avgSeconds,
+  compareSeconds,
   todayText,
   avgText,
   mostActiveLabel,
 }: {
   todaySeconds: number
-  avgSeconds: number
+  compareSeconds: number
   todayText: string
   avgText: string
   mostActiveLabel: string
 }) {
-  const ratio = avgSeconds > 0 ? todaySeconds / avgSeconds : 0
+  const ratio = compareSeconds > 0 ? todaySeconds / compareSeconds : 0
   const pct = Math.round(Math.abs(ratio - 1) * 100)
   const down = ratio < 1
   const color = down ? '#bf616a' : '#a3be8c'
