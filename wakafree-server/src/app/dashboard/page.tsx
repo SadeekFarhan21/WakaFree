@@ -5,7 +5,7 @@ import ActivityChart from '@/components/ActivityChart'
 import BreakdownPie from '@/components/BreakdownPie'
 import { AICodingChart, WeekdaysChart, TodayGauge, AiHumanByDayChart } from '@/components/DashboardCharts'
 import TimelineCard from '@/components/TimelineCard'
-import { mapTimelineRow } from '@/lib/timelineData'
+import { mapTimelineRow, normalizeMachineName } from '@/lib/timelineData'
 import { ProjectsDailyChart, CategoriesDailyChart, type DailyStackRow } from '@/components/StackedDaily'
 import RefreshButton from '@/components/RefreshButton'
 import RangePicker from '@/components/RangePicker'
@@ -53,22 +53,6 @@ interface AIProjectEntry {
   ai_agent_breakdown?: Array<{ name: string; cost: number; lines?: number }>
 }
 
-// Friendly display names for machine hostnames
-const MACHINE_NAMES: Record<string, string> = {
-  'Farhans-MacBook-Pro.local': 'Macbook M4 Pro',
-  'Farhans-MacBook-Pro-2.local': 'MacBook M4 Pro',
-  '80a9973d436b': 'MacBook M3 Max',
-  'Farhans-MacBook-Neo.local': 'Macbook Neo',
-  'codespaces-f027bb': 'GitHub Codespaces',
-  'dev-dsk-fsadeek-2a-5b2fc1da.us-west-2.amazon.com': 'Amazon Dev Desktop',
-}
-
-function machineDisplayName(name: string): string {
-  if (MACHINE_NAMES[name]) return MACHINE_NAMES[name]
-  // EC2 internal hostnames and dataplane agent boxes are all Amazon EC2.
-  if (/^ip-\d+-\d+-\d+-\d+\./.test(name) || /^ds-.*agent/.test(name)) return 'Amazon EC2'
-  return name
-}
 
 function aggregateEntries(rows: DailyRow[], key: keyof WakaDay, limit: number) {
   const map = new Map<string, number>()
@@ -189,17 +173,21 @@ async function getData(rangeDays: number) {
   // Range daily stacks: per-project and per-category
   const stackKeys = (key: 'projects' | 'categories', limit: number) =>
     aggregateEntries(rangeRows, key, limit).map((e) => e.name)
+  // Anything outside the top names lands in Miscellaneous so day totals stay honest.
   const buildDailyStacks = (key: 'projects' | 'categories', names: string[]): DailyStackRow[] =>
     [...rangeRows].reverse().map((r) => {
       const row: DailyStackRow = { date: r.date.slice(5) }
       for (const name of names) row[name] = 0
+      let misc = 0
       for (const e of (r.data[key] ?? []) as WakaEntry[]) {
         if (names.includes(e.name)) row[e.name] = e.total_seconds
+        else misc += e.total_seconds
       }
+      row['Miscellaneous'] = misc
       return row
     })
-  const projectStackKeys = stackKeys('projects', 6)
-  const categoryStackKeys = stackKeys('categories', 6)
+  const projectStackKeys = [...stackKeys('projects', 6), 'Miscellaneous']
+  const categoryStackKeys = [...stackKeys('categories', 6), 'Miscellaneous']
 
   // Range AI totals + per-agent lines (from per-project daily entries)
   let aiInputTokens = 0
@@ -265,7 +253,7 @@ async function getData(rangeDays: number) {
       const merged = new Map<string, number>()
       for (const m of aggregateEntries(rangeRows, 'machines', 50)) {
         if (m.name === 'Mac.lan') continue
-        const name = machineDisplayName(m.name)
+        const name = normalizeMachineName(m.name)
         merged.set(name, (merged.get(name) ?? 0) + m.seconds)
       }
       return Array.from(merged.entries())
@@ -396,18 +384,18 @@ export default async function DashboardPage({
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-2">Over the Last {data.rangeDays} Days</p>
           <p className="text-[44px] leading-[52px] font-semibold tracking-[-0.02em] text-onsurface">{formatSeconds(data.rangeSeconds)}</p>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:w-[54%]">
-          <div className="rounded-lg border border-outline-variant/60 bg-container p-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:w-[60%]">
+          <div className="rounded-lg border border-outline-variant/60 bg-container p-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-1.5">Current Day</p>
             <p className="text-xl font-semibold text-onsurface">{data.currentDayText}</p>
             <p className="text-outline text-xs mt-1">Today</p>
           </div>
-          <div className="rounded-lg border border-outline-variant/60 bg-container p-4">
+          <div className="rounded-lg border border-outline-variant/60 bg-container p-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-1.5">Daily Average</p>
             <p className="text-xl font-semibold text-onsurface">{formatSeconds(Math.round(data.rangeSeconds / data.rangeDays))}</p>
             <p className="text-outline text-xs mt-1">over {data.rangeDays} days</p>
           </div>
-          <div className="rounded-lg border border-outline-variant/60 bg-container p-4">
+          <div className="rounded-lg border border-outline-variant/60 bg-container p-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-1.5">Most Active</p>
             <p className="text-xl font-semibold text-onsurface">{data.mostActiveLabel}</p>
             <p className="text-outline text-xs mt-1">top day</p>

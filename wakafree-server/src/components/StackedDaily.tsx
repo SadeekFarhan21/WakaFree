@@ -44,6 +44,7 @@ const TOOLTIP_STYLE = {
 } as const
 
 function colorFor(key: string, i: number, kind: 'project' | 'category') {
+  if (key === 'Miscellaneous') return '#8fbcbb'
   if (kind === 'category') return CATEGORY_COLORS[key] ?? PROJECT_COLORS[i % PROJECT_COLORS.length]
   return PROJECT_COLORS[i % PROJECT_COLORS.length]
 }
@@ -114,6 +115,8 @@ function StackedBars({
             dataKey={key}
             stackId="day"
             fill={colorFor(key, i, kind)}
+            stroke="#12161d"
+            strokeWidth={2}
             isAnimationActive={false}
           />
         ))}
