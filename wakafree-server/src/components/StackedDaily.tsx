@@ -48,6 +48,37 @@ function colorFor(key: string, i: number, kind: 'project' | 'category') {
   return PROJECT_COLORS[i % PROJECT_COLORS.length]
 }
 
+// Custom tooltip: hides zero-time series, sorts the rest longest-first.
+function StackTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean
+  payload?: Array<{ name?: string; value?: number; color?: string }>
+  label?: string
+}) {
+  if (!active || !payload?.length) return null
+  const items = payload
+    .filter((p) => (p.value ?? 0) >= 60)
+    .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+  if (items.length === 0) return null
+  return (
+    <div style={TOOLTIP_STYLE} className="px-3 py-2">
+      <p className="mb-1 text-[#8b919d]">{label}</p>
+      {items.map((p) => (
+        <p key={p.name} className="flex items-center gap-1.5 text-[#e6e8ec]">
+          <span
+            className="inline-block h-2 w-2 rounded-[2px]"
+            style={{ backgroundColor: p.color }}
+          />
+          {p.name} : {fmtTime(Number(p.value))}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 function StackedBars({
   data,
   seriesKeys,
@@ -74,11 +105,8 @@ function StackedBars({
           tick={{ fill: '#8b919d', fontSize: 11, fontFamily: 'var(--font-mono), monospace' }}
         />
         <Tooltip
-          formatter={(value, name) => [fmtTime(Number(value)), name]}
+          content={<StackTooltip />}
           cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-          labelStyle={{ color: '#8b919d', marginBottom: 4 }}
-          itemStyle={{ color: '#e6e8ec', padding: 0 }}
-          contentStyle={TOOLTIP_STYLE}
         />
         {seriesKeys.map((key, i) => (
           <Bar

@@ -214,11 +214,14 @@ async function getData(rangeDays: number) {
       aiPrompts += p.ai_prompt_events_total ?? 0
       aiSessions += p.ai_sessions ?? 0
       for (const a of p.ai_agent_breakdown ?? []) {
-        agentLines.set(a.name, (agentLines.get(a.name) ?? 0) + (a.lines ?? 0))
+        // WakaTime reports agent slugs like "Claude-Code" — display with spaces.
+        const name = a.name.replace(/-/g, ' ')
+        agentLines.set(name, (agentLines.get(name) ?? 0) + (a.lines ?? 0))
       }
     }
   }
   const topAgents = Array.from(agentLines.entries())
+    .filter(([, lines]) => lines > 0)
     .map(([name, lines]) => ({ name, seconds: lines }))
     .sort((a, b) => b.seconds - a.seconds)
     .slice(0, 8)
@@ -545,13 +548,13 @@ export default async function DashboardPage({
         {/* Categories */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Categories</h3>
-          <BreakdownPie data={data.topCategories} />
+          <BreakdownPie data={data.topCategories} totalSeconds={data.rangeSeconds} />
         </div>
 
         {/* Editors */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Editors</h3>
-          <BreakdownPie data={data.topEditors} />
+          <BreakdownPie data={data.topEditors} totalSeconds={data.rangeSeconds} />
         </div>
       </div>
 
@@ -559,13 +562,13 @@ export default async function DashboardPage({
         {/* Languages */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Languages</h3>
-          <BreakdownPie data={data.topLanguages} />
+          <BreakdownPie data={data.topLanguages} totalSeconds={data.rangeSeconds} />
         </div>
 
         {/* Operating Systems */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Operating Systems</h3>
-          <BreakdownPie data={data.topOSs} />
+          <BreakdownPie data={data.topOSs} totalSeconds={data.rangeSeconds} />
         </div>
       </div>
 
@@ -573,7 +576,7 @@ export default async function DashboardPage({
         {/* Machines */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Machines</h3>
-          <BreakdownPie data={data.topMachines} />
+          <BreakdownPie data={data.topMachines} totalSeconds={data.rangeSeconds} />
         </div>
 
         {/* Today vs daily average gauge */}
