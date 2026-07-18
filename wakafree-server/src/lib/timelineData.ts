@@ -25,9 +25,19 @@ export interface TimelineRow {
   durations_slices?: Record<string, DurationsWrapper | null> | null
 }
 
+// Canonical display names for machines that have multiple WakaTime hostnames.
+const MACHINE_ALIASES: Record<string, string> = {
+  'Farhans-MacBook-Pro-2.local': 'MacBook M4 Pro',
+  '80a9973d436b': 'MacBook M3 Max',
+}
+
+function normalizeMachineName(name: string): string {
+  return MACHINE_ALIASES[name] ?? name
+}
+
 // Each slice's blocks carry their own field name (category, language, ...).
 function blockLabel(b: Record<string, unknown>): string {
-  return String(
+  const raw = String(
     b.category ??
       b.language ??
       b.editor ??
@@ -37,6 +47,9 @@ function blockLabel(b: Record<string, unknown>): string {
       b.project ??
       'Other'
   )
+  // Normalize machine names if this block is machine-sliced.
+  if (b.machine !== undefined) return normalizeMachineName(raw)
+  return raw
 }
 
 function toBlocks(wrap: DurationsWrapper | null | undefined): TimelineBlock[] {
