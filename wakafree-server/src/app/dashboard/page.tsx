@@ -83,13 +83,22 @@ interface MetaRow {
 }
 
 async function getData(rangeDays: number) {
-  const [{ data: rows, error }, { data: metaRows }] = await Promise.all([
+  // The heavy JSONB timeline columns (durations, durations_slices) are only
+  // needed for the most recent day — fetching them for all 365 rows made every
+  // page load pull tens of MB from Supabase. Fetch summaries for the year and
+  // timelines for just the last few days.
+  const [{ data: rows, error }, { data: metaRows }, { data: timelineRows }] = await Promise.all([
+    supabase
+      .from('waka_daily')
+      .select('date, data')
+      .order('date', { ascending: false })
+      .limit(365),
+    supabase.from('waka_meta').select('key, data'),
     supabase
       .from('waka_daily')
       .select('date, data, durations, durations_category, durations_slices')
       .order('date', { ascending: false })
-      .limit(365),
-    supabase.from('waka_meta').select('key, data'),
+      .limit(3),
   ])
 
   if (error || !rows || rows.length === 0) return null
@@ -97,8 +106,11 @@ async function getData(rangeDays: number) {
   const todayLocal = currentLocalDate()
   // Drop any stale rows dated in the future relative to our dedicated timezone
   // (e.g. a UTC-rolled "tomorrow" row created before the timezone fix).
-  const typed = (
-    rows as Array<
+  const typed = (rows as DailyRow[]).filter((r) => r.date <= todayLocal)
+  if (typed.length === 0) return null
+
+  const typedTimelines = (
+    (timelineRows ?? []) as Array<
       DailyRow & {
         durations: DurationsWrapper | null
         durations_category: DurationsWrapper | null
@@ -106,7 +118,6 @@ async function getData(rangeDays: number) {
       }
     >
   ).filter((r) => r.date <= todayLocal)
-  if (typed.length === 0) return null
 
   const meta = new Map<string, unknown>()
   for (const m of (metaRows ?? []) as MetaRow[]) meta.set(m.key, m.data)
@@ -121,7 +132,7 @@ async function getData(rangeDays: number) {
   const goalsList = Array.isArray(goalsRaw) ? goalsRaw : []
 
   // Most recent day that actually has a timeline.
-  const latestWithTimeline = typed.find(
+  const latestWithTimeline = typedTimelines.find(
     (r) => r.durations && Array.isArray(r.durations.data) && r.durations.data.length > 0
   )
 
