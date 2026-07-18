@@ -17,26 +17,29 @@ const TABS = [
   },
   {
     href: '/dashboard#ai-metrics',
-    label: 'AI Metrics',
+    label: 'Metrics',
     icon: <Icon d={['M3 17l6-6 4 4 8-8', 'M17 7h4v4']} />,
+  },
+  {
+    href: '/dashboard#statistics',
+    label: 'Statistics',
+    icon: <Icon d={['M12 20V10', 'M18 20V4', 'M6 20v-4']} />,
   },
 ]
 
 export default function DashboardTabs() {
   return (
-    <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6">
-      <div className="hidden items-center md:flex">
-        {TABS.map((tab) => (
-          <a
-            key={tab.label}
-            href={tab.href}
-            className="flex shrink-0 items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-[13px] text-outline transition-colors hover:text-onsurface-variant"
-          >
-            {tab.icon}
-            {tab.label}
-          </a>
-        ))}
-      </div>
+    <div className="hidden items-center gap-1 md:flex">
+      {TABS.map((tab) => (
+        <a
+          key={tab.label}
+          href={tab.href}
+          className="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold text-onsurface-variant transition-colors hover:bg-container-high hover:text-onsurface"
+        >
+          {tab.icon}
+          {tab.label}
+        </a>
+      ))}
     </div>
   )
 }

@@ -377,12 +377,7 @@ export default async function DashboardPage({
     <main className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-8 mt-2">
-        <div>
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-outline mb-1">
-            WakaFree Dashboard
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-onsurface">Activity Overview</h1>
-        </div>
+        <h1 className="text-2xl font-semibold tracking-tight text-onsurface">Activity Overview</h1>
         <div className="flex items-center gap-3">
           <RefreshButton />
           <RangePicker current={data.rangeDays} />
@@ -543,7 +538,7 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div id="statistics" className="scroll-mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Categories */}
         <div className="bg-container-low border border-line rounded-lg p-6">
           <h3 className="text-base font-medium text-onsurface text-center mb-4">Categories</h3>
@@ -609,49 +604,6 @@ export default async function DashboardPage({
         <ActivityChart data={data.dailyActivity} />
       </div>
 
-      {/* Goals (from WakaTime /goals) */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold tracking-tight text-onsurface mb-5">Goals</h2>
-        {data.goals.length === 0 ? (
-          <div className="bg-container-low border border-line rounded-lg p-6">
-            <p className="text-outline text-sm">
-              No goals set in WakaTime yet. Create one at{' '}
-              <span className="text-primary">wakatime.com/goals</span> and it&apos;ll appear here on the next sync.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {data.goals.map((g, i) => {
-              const goal = g as { title?: string; type?: string; cumulative_status?: string; is_enabled?: boolean }
-              return (
-                <div key={i} className="bg-container-low border border-line rounded-lg p-5">
-                  <h3 className="font-semibold text-onsurface mb-1">{goal.title ?? `Goal ${i + 1}`}</h3>
-                  {goal.type && <p className="text-xs text-outline mb-2 capitalize">{goal.type.replace(/_/g, ' ')}</p>}
-                  <span
-                    className={`inline-block text-xs px-2 py-0.5 rounded-full ${
-                      goal.cumulative_status === 'success'
-                        ? 'bg-[#a3be8c]/15 text-[#a3be8c]'
-                        : 'bg-container-high text-onsurface-variant'
-                    }`}
-                  >
-                    {goal.cumulative_status ?? (goal.is_enabled ? 'active' : 'inactive')}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* Per-project detail now lives in the Projects tab (/dashboard/projects) */}
-      <div className="flex justify-center">
-        <a
-          href="/dashboard/projects"
-          className="text-sm text-primary hover:text-primary-dim font-medium"
-        >
-          View detailed per-project breakdown →
-        </a>
-      </div>
     </main>
   )
 }
