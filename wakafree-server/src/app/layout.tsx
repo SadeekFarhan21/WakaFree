@@ -5,7 +5,7 @@ import './globals.css'
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
 export const metadata: Metadata = {
-  title: "Farhan's WakaFree",
+  title: "Farhan's WakaTime",
   description: 'Self-hosted coding time tracker',
   icons: { icon: '/favicon.svg' },
 }
