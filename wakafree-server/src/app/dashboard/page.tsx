@@ -171,8 +171,15 @@ async function getData(rangeDays: number) {
     (s, r) => s + (r.data.grand_total?.ai_model_total_cost ?? r.data.grand_total?.ai_agent_total_cost ?? 0),
     0
   )
-  const totalAiAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.ai_additions ?? 0), 0)
-  const totalHumanAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.human_additions ?? 0), 0)
+  // WakaTime's line-change totals include both additions and deletions.
+  const totalAiLines = rangeRows.reduce(
+    (s, r) => s + (r.data.grand_total?.ai_additions ?? 0) + (r.data.grand_total?.ai_deletions ?? 0),
+    0
+  )
+  const totalHumanLines = rangeRows.reduce(
+    (s, r) => s + (r.data.grand_total?.human_additions ?? 0) + (r.data.grand_total?.human_deletions ?? 0),
+    0
+  )
 
   // Daily activity chart follows the selected range
   const dailyActivity = [...rangeRows]
@@ -277,8 +284,8 @@ async function getData(rangeDays: number) {
     dailyActivity,
     aiHumanDaily,
     weekdayData,
-    totalAiAdditions,
-    totalHumanAdditions,
+    totalAiLines,
+    totalHumanLines,
     todaySeconds: todayRow?.data.grand_total?.total_seconds ?? 0,
     priorAvgSeconds,
     aiInputTokens,
@@ -389,8 +396,8 @@ export default async function DashboardPage({
   const rangeDays = RANGE_OPTIONS.includes(Number(range)) ? Number(range) : 7
   const data = await getData(rangeDays)
   const aiPct =
-    data && data.totalAiAdditions > 0
-      ? Math.round((data.totalAiAdditions / (data.totalAiAdditions + data.totalHumanAdditions)) * 100)
+    data && data.totalAiLines > 0
+      ? Math.round((data.totalAiLines / (data.totalAiLines + data.totalHumanLines)) * 100)
       : 0
 
   if (!data) {
@@ -465,13 +472,13 @@ export default async function DashboardPage({
           <div className="grid w-full flex-1 grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
             <AIStat
               label="AI lines"
-              value={compactNumber(data.totalAiAdditions)}
+              value={compactNumber(data.totalAiLines)}
               bar={aiPct}
               barColor="#b48ead"
             />
             <AIStat
               label="Human lines"
-              value={compactNumber(data.totalHumanAdditions)}
+              value={compactNumber(data.totalHumanLines)}
               bar={100 - aiPct}
               barColor="#94a3b8"
             />

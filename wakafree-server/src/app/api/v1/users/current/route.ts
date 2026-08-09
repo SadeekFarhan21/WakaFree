@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     data: {
       id: data.id,
       email: data.email,
-      display_name: data.display_name ?? data.username ?? 'WakaFree User',
+      display_name: data.display_name ?? data.username ?? "Farhan's WakaTime User",
       username: data.username,
       timezone: data.timezone ?? 'UTC',
       plan: 'free',

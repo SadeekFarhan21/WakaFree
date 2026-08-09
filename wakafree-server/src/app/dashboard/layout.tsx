@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-4">
           <a href="/dashboard" className="flex items-center gap-2.5 text-onsurface">
             <CodeMark />
-            <span className="text-3xl font-semibold tracking-tight">WakaFree</span>
+            <span className="text-3xl font-semibold tracking-tight">Farhan's WakaFree</span>
           </a>
           <DashboardTabs />
         </div>
