@@ -458,12 +458,6 @@ export default async function DashboardPage({
       <div id="ai-metrics" className="scroll-mt-24 bg-container-low border border-line rounded-lg p-6 mb-8">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-medium tracking-tight text-onsurface">AI Coding</h2>
-          <a
-            href="/dashboard/projects"
-            className="rounded border border-line px-3 py-1.5 text-[13px] font-medium text-onsurface-variant transition-colors hover:border-outline-variant hover:text-onsurface"
-          >
-            Open AI breakdown →
-          </a>
         </div>
         <div className="flex flex-col items-center gap-6 xl:flex-row">
           <div className="shrink-0">
