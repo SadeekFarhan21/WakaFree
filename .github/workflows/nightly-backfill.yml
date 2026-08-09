@@ -1,0 +1,18 @@
+name: Nightly WakaTime backfill
+
+on:
+  schedule:
+    # 06:00 EDT = 10:00 UTC. GitHub Actions schedules are UTC.
+    - cron: '0 10 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh the last 365 days
+        run: |
+          code=$(curl -sS -o /tmp/resp.json -w "%{http_code}" \
+            "https://wakafree.farhansadeek.com/api/wakatime/sync?backfill=365&secret=${{ secrets.WAKAFREE_SYNC_SECRET }}")
+          cat /tmp/resp.json
+          [ "$code" = "200" ] || { echo "Backfill failed with HTTP $code"; exit 1; }

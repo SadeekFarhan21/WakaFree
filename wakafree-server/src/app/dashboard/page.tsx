@@ -24,6 +24,14 @@ interface WakaDay {
     total_seconds: number
     text: string
     ai_agent_total_cost?: number
+    ai_model_total_cost?: number
+    ai_input_tokens?: number
+    ai_cached_input_tokens?: number
+    ai_output_tokens?: number
+    ai_prompt_events_total?: number
+    ai_sessions?: number
+    ai_agent_breakdown?: Array<{ name: string; cost?: number; lines?: number }>
+    ai_model_breakdown?: Array<{ name: string; cost?: number; lines?: number }>
     ai_additions?: number
     ai_deletions?: number
     human_additions?: number
@@ -159,7 +167,10 @@ async function getData(rangeDays: number) {
     ? Math.round(priorRows.reduce((s, r) => s + (r.data.grand_total?.total_seconds ?? 0), 0) / priorRows.length)
     : 0
 
-  const totalAiCost = rangeRows.reduce((s, r) => s + (r.data.grand_total?.ai_agent_total_cost ?? 0), 0)
+  const totalAiCost = rangeRows.reduce(
+    (s, r) => s + (r.data.grand_total?.ai_model_total_cost ?? r.data.grand_total?.ai_agent_total_cost ?? 0),
+    0
+  )
   const totalAiAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.ai_additions ?? 0), 0)
   const totalHumanAdditions = rangeRows.reduce((s, r) => s + (r.data.grand_total?.human_additions ?? 0), 0)
 
@@ -200,19 +211,45 @@ async function getData(rangeDays: number) {
   const projectStackKeys = [...stackKeys('projects', 6), 'Miscellaneous']
   const categoryStackKeys = [...stackKeys('categories', 6), 'Miscellaneous']
 
-  // Range AI totals + per-agent lines (from per-project daily entries)
+  // Range AI totals + per-agent/model lines. WakaTime's daily grand_total is
+  // authoritative; project entries are retained only for older payloads.
   let aiInputTokens = 0
+  let aiCachedInputTokens = 0
   let aiOutputTokens = 0
   let aiPrompts = 0
   let aiSessions = 0
   const agentLines = new Map<string, number>()
   for (const r of rangeRows) {
-    for (const p of (r.data.projects ?? []) as unknown as AIProjectEntry[]) {
-      aiInputTokens += p.ai_input_tokens ?? 0
-      aiOutputTokens += p.ai_output_tokens ?? 0
-      aiPrompts += p.ai_prompt_events_total ?? 0
-      aiSessions += p.ai_sessions ?? 0
-      for (const a of p.ai_agent_breakdown ?? []) {
+    const projects = (r.data.projects ?? []) as unknown as AIProjectEntry[]
+    const grandTotal = r.data.grand_total
+    const projectTotals = projects.reduce(
+      (totals, p) => ({
+        input: totals.input + (p.ai_input_tokens ?? 0),
+        cached: totals.cached + 0,
+        output: totals.output + (p.ai_output_tokens ?? 0),
+        prompts: totals.prompts + (p.ai_prompt_events_total ?? 0),
+        sessions: totals.sessions + (p.ai_sessions ?? 0),
+      }),
+      { input: 0, cached: 0, output: 0, prompts: 0, sessions: 0 }
+    )
+    aiInputTokens += grandTotal.ai_input_tokens ?? projectTotals.input
+    aiCachedInputTokens += grandTotal.ai_cached_input_tokens ?? projectTotals.cached
+    aiOutputTokens += grandTotal.ai_output_tokens ?? projectTotals.output
+    aiPrompts += grandTotal.ai_prompt_events_total ?? projectTotals.prompts
+    aiSessions += grandTotal.ai_sessions ?? projectTotals.sessions
+
+    const dailyAgents = grandTotal.ai_model_breakdown?.length
+      ? grandTotal.ai_model_breakdown
+      : grandTotal.ai_agent_breakdown?.length
+        ? grandTotal.ai_agent_breakdown
+        : projects.flatMap((p) => p.ai_agent_breakdown ?? [])
+    if (dailyAgents?.length) {
+      for (const a of dailyAgents) {
+        const name = a.name.replace(/-/g, ' ')
+        agentLines.set(name, (agentLines.get(name) ?? 0) + (a.lines ?? 0))
+      }
+    } else {
+      for (const p of projects) for (const a of p.ai_agent_breakdown ?? []) {
         // WakaTime reports agent slugs like "Claude-Code" — display with spaces.
         const name = a.name.replace(/-/g, ' ')
         agentLines.set(name, (agentLines.get(name) ?? 0) + (a.lines ?? 0))
@@ -245,6 +282,7 @@ async function getData(rangeDays: number) {
     todaySeconds: todayRow?.data.grand_total?.total_seconds ?? 0,
     priorAvgSeconds,
     aiInputTokens,
+    aiCachedInputTokens,
     aiOutputTokens,
     aiPrompts,
     aiSessions,
@@ -439,8 +477,8 @@ export default async function DashboardPage({
             />
             <AIStat
               label="Tokens"
-              value={compactNumber(data.aiInputTokens + data.aiOutputTokens)}
-              sub={`${compactNumber(data.aiInputTokens)} in · ${compactNumber(data.aiOutputTokens)} out`}
+              value={compactNumber(data.aiInputTokens + data.aiCachedInputTokens + data.aiOutputTokens)}
+              sub={`${compactNumber(data.aiInputTokens)} uncached · ${compactNumber(data.aiCachedInputTokens)} cached · ${compactNumber(data.aiOutputTokens)} out`}
             />
             <AIStat
               label="Cost"
@@ -529,7 +567,7 @@ export default async function DashboardPage({
 
         {/* AI Agents */}
         <div className="bg-container-low border border-line rounded-lg p-6">
-          <h3 className="text-base font-medium text-onsurface text-center mb-4">Agents</h3>
+          <h3 className="text-base font-medium text-onsurface text-center mb-4">Models</h3>
           {data.topAgents.length > 0 ? (
             <BreakdownPie data={data.topAgents} valueKind="lines" />
           ) : (
