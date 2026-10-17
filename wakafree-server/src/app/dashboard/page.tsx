@@ -62,13 +62,17 @@ interface AIProjectEntry {
 }
 
 
+// Unattributed time is shown as Miscellaneous everywhere on the dashboard.
+const displayName = (name: string) => (name === 'Unknown Project' ? 'Miscellaneous' : name)
+
 function aggregateEntries(rows: DailyRow[], key: keyof WakaDay, limit: number) {
   const map = new Map<string, number>()
   for (const row of rows) {
     const entries = row.data[key] as WakaEntry[] | undefined
     if (!entries) continue
     for (const e of entries) {
-      map.set(e.name, (map.get(e.name) ?? 0) + e.total_seconds)
+      const name = displayName(e.name)
+      map.set(name, (map.get(name) ?? 0) + e.total_seconds)
     }
   }
   return Array.from(map.entries())
@@ -200,11 +204,11 @@ async function getData(rangeDays: number) {
   const weekdayData = buildWeekdayData(rangeRows)
 
   // Range daily stacks: per-project and per-category
-  // "Unknown Project" never gets its own band; it always falls into Miscellaneous.
+  // Miscellaneous (incl. Unknown Project) never gets its own band; it's the remainder below.
   const stackKeys = (key: 'projects' | 'categories', limit: number) =>
     aggregateEntries(rangeRows, key, limit + 1)
       .map((e) => e.name)
-      .filter((name) => name !== 'Unknown Project')
+      .filter((name) => name !== 'Miscellaneous')
       .slice(0, limit)
   // Anything outside the top names lands in Miscellaneous so day totals stay honest.
   const buildDailyStacks = (key: 'projects' | 'categories', names: string[]): DailyStackRow[] =>
@@ -323,7 +327,7 @@ async function getData(rangeDays: number) {
     })(),
     topOSs: aggregateEntries(rangeRows, 'operating_systems', 6),
     // most recent day breakdown
-    latestProjects: (latest.data.projects ?? []).slice(0, 8).map((p) => ({ name: p.name, seconds: p.total_seconds })),
+    latestProjects: (latest.data.projects ?? []).slice(0, 8).map((p) => ({ name: displayName(p.name), seconds: p.total_seconds })),
     latestLanguages: (latest.data.languages ?? []).slice(0, 8).map((l) => ({ name: l.name, seconds: l.total_seconds })),
     latestEditors: (latest.data.editors ?? []).slice(0, 4).map((e) => ({ name: e.name, seconds: e.total_seconds })),
     latestCategories: (latest.data.categories ?? []).slice(0, 4).map((c) => ({ name: c.name, seconds: c.total_seconds, percent: c.percent })),

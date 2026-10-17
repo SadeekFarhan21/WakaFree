@@ -59,8 +59,10 @@ export function aggregateProjectDetails(rows: RowWithProjects[], limit: number):
   for (const row of rows) {
     const projects = row.data.projects ?? []
     for (const p of projects) {
-      const existing = map.get(p.name) ?? {
-        name: p.name,
+      // Unattributed time is shown as Miscellaneous everywhere on the dashboard.
+      const name = p.name === 'Unknown Project' ? 'Miscellaneous' : p.name
+      const existing = map.get(name) ?? {
+        name,
         seconds: 0,
         ai_sessions: 0,
         ai_additions: 0,
@@ -89,7 +91,7 @@ export function aggregateProjectDetails(rows: RowWithProjects[], limit: number):
         existing.agentCosts.set(agent.name, (existing.agentCosts.get(agent.name) ?? 0) + agent.cost)
       }
 
-      map.set(p.name, existing)
+      map.set(name, existing)
     }
   }
 
