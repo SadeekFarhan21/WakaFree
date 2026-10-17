@@ -28,8 +28,6 @@ export interface TimelineRow {
 // Canonical display names for machines that have multiple WakaTime hostnames.
 // Single source of truth — the dashboard imports this too.
 export const MACHINE_ALIASES: Record<string, string> = {
-  'Farhans-MacBook-Pro.local': 'MacBook M4 Pro',
-  'Farhans-MacBook-Pro-2.local': 'MacBook M4 Pro',
   '80a9973d436b': 'MacBook M3 Max',
   'Farhans-MacBook-Neo.local': 'MacBook Neo',
   'codespaces-f027bb': 'GitHub Codespaces',
@@ -38,6 +36,8 @@ export const MACHINE_ALIASES: Record<string, string> = {
 
 export function normalizeMachineName(name: string): string {
   if (MACHINE_ALIASES[name]) return MACHINE_ALIASES[name]
+  // macOS appends -2, -5, -6, ... to the hostname on network conflicts.
+  if (/^Farhans-MacBook-Pro(-\d+)?\.local$/.test(name)) return 'MacBook M4 Pro'
   // EC2 internal hostnames and dataplane agent boxes are all Amazon EC2.
   if (/^ip-\d+-\d+-\d+-\d+\./.test(name) || /^ds-.*agent/.test(name)) return 'Amazon EC2'
   return name
@@ -57,6 +57,8 @@ function blockLabel(b: Record<string, unknown>): string {
   )
   // Normalize machine names if this block is machine-sliced.
   if (b.machine !== undefined) return normalizeMachineName(raw)
+  // Unattributed time shares the Miscellaneous lane with the daily stacks.
+  if (raw === 'Unknown Project') return 'Miscellaneous'
   return raw
 }
 

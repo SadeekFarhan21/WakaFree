@@ -14,7 +14,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${geist.variable} font-sans bg-surface text-onsurface antialiased`}>
+      {/* Browser extensions (e.g. Grammarly) inject attributes on <body> before hydration. */}
+      <body
+        className={`${geist.variable} font-sans bg-surface text-onsurface antialiased`}
+        suppressHydrationWarning
+      >
         {children}
         <Analytics />
       </body>

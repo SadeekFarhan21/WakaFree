@@ -200,8 +200,12 @@ async function getData(rangeDays: number) {
   const weekdayData = buildWeekdayData(rangeRows)
 
   // Range daily stacks: per-project and per-category
+  // "Unknown Project" never gets its own band; it always falls into Miscellaneous.
   const stackKeys = (key: 'projects' | 'categories', limit: number) =>
-    aggregateEntries(rangeRows, key, limit).map((e) => e.name)
+    aggregateEntries(rangeRows, key, limit + 1)
+      .map((e) => e.name)
+      .filter((name) => name !== 'Unknown Project')
+      .slice(0, limit)
   // Anything outside the top names lands in Miscellaneous so day totals stay honest.
   const buildDailyStacks = (key: 'projects' | 'categories', names: string[]): DailyStackRow[] =>
     [...rangeRows].reverse().map((r) => {

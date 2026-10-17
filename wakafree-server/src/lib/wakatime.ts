@@ -128,42 +128,54 @@ export async function syncRange(
   const days = json.data ?? []
 
   // 2. Per-day durations (the timeline) — project-sliced plus every extra
-  // slice the dashboard's "Segment By" picker offers, all in parallel.
+  // slice the dashboard's "Segment By" picker offers.
   const TIMELINE_SLICES = ['category', 'language', 'editor', 'os', 'machine'] as const
   const durationsByDate = new Map<string, unknown>()
   const slicesByDate = new Map<string, Record<string, unknown>>()
-  await Promise.all(
-    days.flatMap((day) => {
-      const d = day.range.date
-      return [
-        fetchWakaFull(`/durations?date=${d}`).then((durations) => {
-          if (durations !== null) durationsByDate.set(d, durations)
-        }),
-        ...TIMELINE_SLICES.map((slice) =>
-          fetchWakaFull(`/durations?date=${d}&slice_by=${slice}`).then((durations) => {
-            if (durations !== null) {
-              const cur = slicesByDate.get(d) ?? {}
-              cur[slice] = durations
-              slicesByDate.set(d, cur)
-            }
-          })
-        ),
-      ]
-    })
-  )
+  // Fetch one day at a time: firing 6 requests × every day at once trips
+  // WakaTime's rate limit on backfills, and every 429 came back as null.
+  for (const day of days) {
+    const d = day.range.date
+    await Promise.all([
+      fetchWakaFull(`/durations?date=${d}`).then((durations) => {
+        if (durations !== null) durationsByDate.set(d, durations)
+      }),
+      ...TIMELINE_SLICES.map((slice) =>
+        fetchWakaFull(`/durations?date=${d}&slice_by=${slice}`).then((durations) => {
+          if (durations !== null) {
+            const cur = slicesByDate.get(d) ?? {}
+            cur[slice] = durations
+            slicesByDate.set(d, cur)
+          }
+        })
+      ),
+    ])
+  }
 
   const synced_at = new Date().toISOString()
-  const rows = days.map((day) => ({
-    date: day.range.date,
-    data: day,
-    durations: durationsByDate.get(day.range.date) ?? null,
-    durations_category: slicesByDate.get(day.range.date)?.category ?? null,
-    durations_slices: slicesByDate.get(day.range.date) ?? null,
-    synced_at,
-  }))
+  // Only write durations columns when the fetch succeeded, so a failed or
+  // rate-limited request never wipes a timeline that was already stored.
+  const rows = days.map((day) => {
+    const d = day.range.date
+    const row: Record<string, unknown> = { date: d, data: day, synced_at }
+    if (durationsByDate.has(d)) row.durations = durationsByDate.get(d)
+    const slices = slicesByDate.get(d)
+    if (slices && Object.keys(slices).length === TIMELINE_SLICES.length) {
+      row.durations_slices = slices
+      row.durations_category = slices.category
+    }
+    return row
+  })
 
-  if (rows.length > 0) {
-    const { error } = await supabase.from('waka_daily').upsert(rows, { onConflict: 'date' })
+  // A bulk upsert nulls any column missing from some rows, so upsert each
+  // column shape separately to keep omitted durations untouched.
+  const byShape = new Map<string, Record<string, unknown>[]>()
+  for (const row of rows) {
+    const shape = Object.keys(row).sort().join(',')
+    byShape.set(shape, [...(byShape.get(shape) ?? []), row])
+  }
+  for (const group of byShape.values()) {
+    const { error } = await supabase.from('waka_daily').upsert(group, { onConflict: 'date' })
     if (error) return { ...empty, error: error.message, status: 500 }
   }
 
@@ -172,7 +184,7 @@ export async function syncRange(
 
   return {
     synced: rows.length,
-    dates: rows.map((r) => r.date),
+    dates: rows.map((r) => r.date as string),
     durations_captured: durationsByDate.size,
     meta_synced,
   }
