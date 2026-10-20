@@ -70,6 +70,44 @@ function toBlocks(wrap: DurationsWrapper | null | undefined): TimelineBlock[] {
   }))
 }
 
+// Human coding wins over AI coding: AI Coding time that overlaps a Coding
+// block is cut out, so the two lanes never cover the same moment.
+export const HUMAN_CODING = 'Coding'
+export const AI_CODING = 'AI Coding'
+
+// Remove every part of `blocks` that overlaps any span in `cut`.
+export function subtractSpans<T extends { time: number; duration: number }>(
+  blocks: T[],
+  cut: { time: number; duration: number }[]
+): T[] {
+  const spans = [...cut].sort((a, b) => a.time - b.time)
+  const out: T[] = []
+  for (const b of blocks) {
+    let start = b.time
+    const end = b.time + b.duration
+    for (const c of spans) {
+      const cEnd = c.time + c.duration
+      if (cEnd <= start) continue
+      if (c.time >= end) break
+      if (c.time > start) out.push({ ...b, time: start, duration: c.time - start })
+      start = Math.max(start, cEnd)
+      if (start >= end) break
+    }
+    if (start < end) out.push({ ...b, time: start, duration: end - start })
+  }
+  return out
+}
+
+export function exclusiveCoding<T extends { time: number; duration: number; project?: string | null }>(
+  blocks: T[]
+): T[] {
+  const human = blocks.filter((b) => b.project === HUMAN_CODING)
+  if (human.length === 0) return blocks
+  const ai = blocks.filter((b) => b.project === AI_CODING)
+  const rest = blocks.filter((b) => b.project !== AI_CODING)
+  return [...rest, ...subtractSpans(ai, human)]
+}
+
 export function mapTimelineRow(date: string, row: TimelineRow | null): TimelinePayload {
   const slices: Record<string, TimelineBlock[]> = {}
   if (row?.durations_slices) {
@@ -82,6 +120,7 @@ export function mapTimelineRow(date: string, row: TimelineRow | null): TimelineP
   if (!slices.category && row?.durations_category?.data?.length) {
     slices.category = toBlocks(row.durations_category)
   }
+  if (slices.category) slices.category = exclusiveCoding(slices.category)
 
   return {
     date,

@@ -1,4 +1,5 @@
 import { timezoneForDate, localMidnightEpochSeconds } from '@/lib/timezone'
+import { AI_CODING, HUMAN_CODING, subtractSpans } from '@/lib/timelineData'
 
 interface DurationBlock {
   time: number // epoch seconds (block start)
@@ -68,9 +69,23 @@ export default function TimelineChart({ date, blocks, timeoutMinutes = 60 }: Pro
     const name = b.project ?? 'Unknown'
     byProject.set(name, [...(byProject.get(name) ?? []), b])
   }
-  const rows = Array.from(byProject.entries())
-    .map(([name, laneBlocks]) => {
-      const merged = mergeBlocks(laneBlocks, timeoutMinutes * 60)
+  const mergedByLane = new Map(
+    Array.from(byProject.entries()).map(([name, laneBlocks]) => [
+      name,
+      mergeBlocks(laneBlocks, timeoutMinutes * 60),
+    ])
+  )
+  // Session merging can bridge AI Coding back across a human Coding gap, so
+  // re-cut AI Coding against the merged Coding sessions.
+  const humanSessions = mergedByLane.get(HUMAN_CODING)
+  const aiSessions = mergedByLane.get(AI_CODING)
+  if (humanSessions && aiSessions) {
+    const cut = subtractSpans(aiSessions, humanSessions)
+    if (cut.length > 0) mergedByLane.set(AI_CODING, cut)
+    else mergedByLane.delete(AI_CODING)
+  }
+  const rows = Array.from(mergedByLane.entries())
+    .map(([name, merged]) => {
       return {
         name,
         blocks: merged,
