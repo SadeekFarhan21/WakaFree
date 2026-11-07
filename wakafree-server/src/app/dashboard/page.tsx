@@ -144,7 +144,7 @@ async function getData(rangeDays: number) {
 
   // Current day = the row for today in our dedicated timezone (0 if none yet).
   const todayRow = typed.find((r) => r.date === todayLocal)
-  const currentDayText = todayRow?.data.grand_total?.text ?? '0 secs'
+  const currentDayText = formatSeconds(todayRow?.data.grand_total?.total_seconds ?? 0)
 
   // Most active = the day with the most tracked time across all history.
   const mostActive = rangeRows.reduce((best, r) =>
@@ -508,7 +508,7 @@ export default async function DashboardPage({
 
       {/* Daily timelines: by project + segmentable, both date-navigable */}
       {data.timelineInitial && (
-        <div id="timeline" className="scroll-mt-24 hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div id="timeline" className="scroll-mt-24 hidden md:grid grid-cols-1 lg:grid-cols-2 lg:items-start gap-6 mb-8">
           <div className="bg-container-low border border-line rounded-lg p-6">
             <TimelineCard
               variant="projects"
