@@ -11,3 +11,16 @@ html,
 body {
   overflow-x: hidden;
 }
+
+/* Keyboard focus and text selection in the accent (primary) instead of the
+   browser defaults. Mouse clicks don't trigger :focus-visible. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid theme('colors.primary.DEFAULT');
+    outline-offset: 2px;
+  }
+  ::selection {
+    background-color: theme('colors.primary.dim');
+    color: theme('colors.primary.on');
+  }
+}
