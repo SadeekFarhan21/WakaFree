@@ -6,8 +6,13 @@ const WAKATIME_API = 'https://wakatime.com/api/v1/users/current'
 function wakaHeaders(): HeadersInit {
   const key = process.env.WAKATIME_API_KEY
   if (!key) throw new Error('WAKATIME_API_KEY env var is not set')
+  // WakaTime rejects plugin API keys (waka_…) outside editor plugins, so this
+  // should be an OAuth access token (waat_…), which goes in a Bearer header.
+  // Basic stays as the fallback for legacy API keys.
   return {
-    Authorization: `Basic ${Buffer.from(key).toString('base64')}`,
+    Authorization: key.startsWith('waka_')
+      ? `Basic ${Buffer.from(key).toString('base64')}`
+      : `Bearer ${key}`,
   }
 }
 
