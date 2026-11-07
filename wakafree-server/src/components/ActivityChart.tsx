@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from 'recharts'
 
 interface Props {
@@ -18,14 +19,16 @@ export default function ActivityChart({ data }: Props) {
     date: d.date.slice(5),
     hours: Math.round(d.seconds / 360) / 10,
   }))
+  // Same treatment as the Weekdays chart: slate bars, the top day in accent.
+  const max = Math.max(...chartData.map((d) => d.hours))
 
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
         <defs>
           <linearGradient id="activityFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#88c0d0" />
-            <stop offset="100%" stopColor="#6797a6" stopOpacity={0.9} />
+            <stop offset="0%" stopColor="#64748b" />
+            <stop offset="100%" stopColor="#475569" stopOpacity={0.9} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -55,7 +58,11 @@ export default function ActivityChart({ data }: Props) {
             fontSize: '12px',
           }}
         />
-        <Bar isAnimationActive={false} dataKey="hours" fill="url(#activityFill)" radius={[3, 3, 0, 0]} />
+        <Bar isAnimationActive={false} dataKey="hours" radius={[3, 3, 0, 0]}>
+          {chartData.map((d, i) => (
+            <Cell key={i} fill={max > 0 && d.hours === max ? '#b48ead' : 'url(#activityFill)'} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   )
