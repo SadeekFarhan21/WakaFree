@@ -38,6 +38,11 @@ const PALETTE = [
 
 // Hour labels across the day (12a, 3a, 6a, ... 12a)
 const HOUR_MARKS = [0, 3, 6, 9, 12, 15, 18, 21, 24]
+
+// Lanes shorter than this are grouped into a single neutral "N others" lane.
+const MIN_LANE_SECONDS = 5 * 60
+const OTHER_COLOR = '#64748b'
+
 function hourLabel(h: number): string {
   const hh = h % 24
   if (hh === 0) return '12a'
@@ -84,15 +89,33 @@ export default function TimelineChart({ date, blocks, timeoutMinutes = 60 }: Pro
     if (cut.length > 0) mergedByLane.set(AI_CODING, cut)
     else mergedByLane.delete(AI_CODING)
   }
-  const rows = Array.from(mergedByLane.entries())
+  const lanes = Array.from(mergedByLane.entries())
     .map(([name, merged]) => {
       return {
         name,
         blocks: merged,
         seconds: merged.reduce((s, b) => s + b.duration, 0),
+        title: name,
+        other: false,
       }
     })
     .sort((a, b) => b.seconds - a.seconds)
+  // Lanes under a few minutes (agent scratch folders and the like) collapse
+  // into one trailing row so a busy day doesn't run to dozens of rows.
+  const tiny = lanes.filter((l) => l.seconds < MIN_LANE_SECONDS)
+  const rows =
+    tiny.length > 1
+      ? [
+          ...lanes.filter((l) => l.seconds >= MIN_LANE_SECONDS),
+          {
+            name: `${tiny.length} others`,
+            blocks: tiny.flatMap((l) => l.blocks).sort((a, b) => a.time - b.time),
+            seconds: tiny.reduce((s, l) => s + l.seconds, 0),
+            title: tiny.map((l) => l.name).join(', '),
+            other: true,
+          },
+        ]
+      : lanes
 
   return (
     // Label column hugs the longest name (capped at 11rem) so short labels
@@ -116,7 +139,7 @@ export default function TimelineChart({ date, blocks, timeoutMinutes = 60 }: Pro
       {/* Swimlanes */}
       {rows.map((row, ri) => (
         <div key={row.name} className="contents">
-          <div className="truncate text-right text-xs text-onsurface-variant" title={row.name}>
+          <div className="truncate text-right text-xs text-onsurface-variant" title={row.title}>
             {row.name}
           </div>
           <div className="font-mono text-[11px] tracking-[0.02em] text-outline">
@@ -134,9 +157,9 @@ export default function TimelineChart({ date, blocks, timeoutMinutes = 60 }: Pro
                   style={{
                     left: `${Math.max(0, left)}%`,
                     width: `${Math.max(0.35, width)}%`,
-                    backgroundColor: PALETTE[ri % PALETTE.length],
+                    backgroundColor: row.other ? OTHER_COLOR : PALETTE[ri % PALETTE.length],
                   }}
-                  title={`${row.name} · ${mins}m`}
+                  title={`${row.other ? row.title : row.name} · ${mins}m`}
                 />
               )
             })}
