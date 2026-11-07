@@ -566,26 +566,21 @@ export default async function DashboardPage({
         </div>
       </div>
 
+      {/* A breakdown with a single entry is always a full ring at 100%; skip it. */}
       <div id="statistics" className="scroll-mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-container-low border border-line rounded-lg p-6">
-          <h3 className="text-base font-medium text-onsurface mb-4">Languages</h3>
-          <BreakdownPie data={data.topLanguages} totalSeconds={data.rangeSeconds} />
-        </div>
-
-        <div className="bg-container-low border border-line rounded-lg p-6">
-          <h3 className="text-base font-medium text-onsurface mb-4">Editors</h3>
-          <BreakdownPie data={data.topEditors} totalSeconds={data.rangeSeconds} />
-        </div>
-
-        <div className="bg-container-low border border-line rounded-lg p-6">
-          <h3 className="text-base font-medium text-onsurface mb-4">Machines</h3>
-          <BreakdownPie data={data.topMachines} totalSeconds={data.rangeSeconds} />
-        </div>
-
-        <div className="bg-container-low border border-line rounded-lg p-6">
-          <h3 className="text-base font-medium text-onsurface mb-4">Operating Systems</h3>
-          <BreakdownPie data={data.topOSs} totalSeconds={data.rangeSeconds} />
-        </div>
+        {[
+          { title: 'Languages', data: data.topLanguages },
+          { title: 'Editors', data: data.topEditors },
+          { title: 'Machines', data: data.topMachines },
+          { title: 'Operating Systems', data: data.topOSs },
+        ]
+          .filter((b) => b.data.length > 1)
+          .map((b) => (
+            <div key={b.title} className="bg-container-low border border-line rounded-lg p-6">
+              <h3 className="text-base font-medium text-onsurface mb-4">{b.title}</h3>
+              <BreakdownPie data={b.data} totalSeconds={data.rangeSeconds} />
+            </div>
+          ))}
       </div>
 
       {/* AI vs Human by day + Weekdays — hidden on phones */}
